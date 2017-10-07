@@ -9,7 +9,9 @@
  */
 defined('_JEXEC') or die;
 
-JLoader::register('Gw2crafterHelper', JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_gw2crafter' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'gw2crafter.php');
+JLoader::register('Gw2crafterHelper',
+	JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_gw2crafter'
+	. DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'gw2crafter.php');
 
 /**
  * Class Gw2crafterFrontendHelper
@@ -19,10 +21,11 @@ JLoader::register('Gw2crafterHelper', JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR 
 class Gw2crafterHelpersGw2crafter
 {
 	protected $gw2API_v2_commercelistings = 'https://api.guildwars2.com/v2/commerce/listings/';
+
 	/**
 	 * Get an instance of the named model
 	 *
-	 * @param   string  $name  Model name
+	 * @param   string $name Model name
 	 *
 	 * @return null|object
 	 */
@@ -43,17 +46,17 @@ class Gw2crafterHelpersGw2crafter
 	/**
 	 * Gets the files attached to an item
 	 *
-	 * @param   int     $pk     The item's id
+	 * @param   int    $pk    The item's id
 	 *
-	 * @param   string  $table  The table's name
+	 * @param   string $table The table's name
 	 *
-	 * @param   string  $field  The field's name
+	 * @param   string $field The field's name
 	 *
 	 * @return  array  The files
 	 */
 	public static function getFiles($pk, $table, $field)
 	{
-		$db = JFactory::getDbo();
+		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
 
 		$query
@@ -68,7 +71,7 @@ class Gw2crafterHelpersGw2crafter
 
 	public static function getVendorPriceFormatted($id)
 	{
-		$db = JFactory::getDbo();
+		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
 
 		$query
@@ -107,27 +110,111 @@ class Gw2crafterHelpersGw2crafter
 
 		return $price;
 	}
+
 	public static function getApiPrice($item_id, $buy = true)
 	{
 
-		$json = file_get_contents('https://api.guildwars2.com/v2/commerce/listings/'.$item_id);
-		$data = json_decode($json, true);
-		$buys = $data['buys'];
+		$json  = file_get_contents('https://api.guildwars2.com/v2/commerce/listings/' . $item_id);
+		$data  = json_decode($json, true);
+		$buys  = $data['buys'];
 		$sells = $data['sells'];
 
-		if ($buy) {
+		if ($buy)
+		{
 			$intvalue = (int) $buys[0]['unit_price'];
-		} else {
+		}
+		else
+		{
 			$intvalue = (int) $sells[0]['unit_price'];
 		}
 
 		return $intvalue;
 	}
 
+	public static function getApiPriceArray($item_id)
+	{
+
+		$json  = file_get_contents('https://api.guildwars2.com/v2/commerce/listings/' . $item_id);
+		$data  = json_decode($json, true);
+		$buys  = $data['buys'];
+		$sells = $data['sells'];
+
+		$total_buys           = 0;
+		$total_buys_in_top    = 0;
+		$total_buys_in_bottom = 0;
+		$high_buy             = 0;
+		$first                = true;
+		$last                 = 0;
+		foreach ($buys as $buy)
+		{
+			if ($first)
+			{
+				$high_buy = $buy['unit_price'];
+				$first    = false;
+			}
+			if ($buy['unit_price'] > $high_buy * .75)
+			{
+				$total_buys_in_top += $buy['listings'] * $buy['quantity'];
+			}
+			if ($buy['unit_price'] < $high_buy * .25)
+			{
+				$total_buys_in_bottom += $buy['listings'] * $buy['quantity'];
+			}
+			$total_buys += $buy['listings'] * $buy['quantity'];
+			$last = $buy['unit_price'];
+		}
+		$buy_data              = array(
+			'high_buy'             => $high_buy,
+			'crazy_buy'          => $last,
+			'total_buys_in_top'    => $total_buys_in_top,
+			'total_buys_in_bottom' => $total_buys_in_bottom,
+			'total_buys'           => $total_buys
+		);
+		$total_sells           = 0;
+		$total_sells_in_top    = 0;
+		$total_sells_in_bottom = 0;
+		$low_sell              = 0;
+		$first                 = true;
+		$last                  = 0;
+		foreach ($sells as $sell)
+		{
+			if ($first)
+			{
+				$low_sell = $sell['unit_price'];
+				$first    = false;
+			}
+			if ($sell['unit_price'] < $low_sell * 1.25)
+			{
+				$total_sells_in_bottom += $sell['listings'] * $sell['quantity'];
+			}
+			if ($sell['unit_price'] > $low_sell * 1.75)
+			{
+				$total_sells_in_top += $sell['listings'] * $sell['quantity'];
+			}
+			$total_sells += $sell['listings'] * $sell['quantity'];
+			$last = $sell['unit_price'];
+		}
+		$sell_data = array(
+			'low_sell'              => $low_sell,
+			'crazy_sell'            => $last,
+			'total_sells_in_top'    => $total_sells_in_top,
+			'total_sells_in_bottom' => $total_sells_in_bottom,
+			'total_sells'           => $total_sells
+		);
+
+		return array($buy_data, $sell_data);
+	}
+
 	public static function getPriceFormatted($price)
 	{
 
 		$intvalue = (int) $price;
+		$loss = false;
+
+		if ($intvalue < 0) {
+			$intvalue = abs($intvalue);
+			$loss = true;
+		}
 
 		$gold   = 0;
 		$silver = 0;
@@ -154,40 +241,43 @@ class Gw2crafterHelpersGw2crafter
 		$price .= $copper > 9 ? (int) $copper : '0' . (int) $copper;
 		$price .= '<img src="/media/com_gw2crafter/images/Copper_coin.png" style="padding-left:5px;padding-right:10px;" />';
 
+		if ($loss) {
+			$price = "<span style=\"color:red;\">" . $price . "</span>";
+		}
 		return $price;
 	}
 
-    /**
-     * Gets the edit permission for an user
-     *
-     * @param   mixed  $item  The item
-     *
-     * @return  bool
-     */
-    public static function canUserEdit($item)
-    {
-        $permission = false;
-        $user       = JFactory::getUser();
+	/**
+	 * Gets the edit permission for an user
+	 *
+	 * @param   mixed $item The item
+	 *
+	 * @return  bool
+	 */
+	public static function canUserEdit($item)
+	{
+		$permission = false;
+		$user       = JFactory::getUser();
 
-        if ($user->authorise('core.edit', 'com_gw2crafter'))
-        {
-            $permission = true;
-        }
-        else
-        {
-            if (isset($item->created_by))
-            {
-                if ($user->authorise('core.edit.own', 'com_gw2crafter') && $item->created_by == $user->id)
-                {
-                    $permission = true;
-                }
-            }
-            else
-            {
-                $permission = true;
-            }
-        }
+		if ($user->authorise('core.edit', 'com_gw2crafter'))
+		{
+			$permission = true;
+		}
+		else
+		{
+			if (isset($item->created_by))
+			{
+				if ($user->authorise('core.edit.own', 'com_gw2crafter') && $item->created_by == $user->id)
+				{
+					$permission = true;
+				}
+			}
+			else
+			{
+				$permission = true;
+			}
+		}
 
-        return $permission;
-    }
+		return $permission;
+	}
 }

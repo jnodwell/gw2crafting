@@ -23,19 +23,19 @@ div.item_container {
 
 div.item_details {
       float:left;
-      width:49%;
+      width:29%;
       margin:0;
       padding-right:1%;
 }
 div.item_prices {
       float:right;
-      width:49%;
+      width:69%;
       margin:0;
       padding-left:1%;
 }
 table.item_prices {
       border: 1px solid #0000C0;
-      margin-top:20px;
+      margin-top:10px;
 }
 table.item_prices td {
       padding:1px;
