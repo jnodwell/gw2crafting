@@ -133,75 +133,97 @@ class Gw2crafterHelpersGw2crafter
 
 	public static function getApiPriceArray($item_id)
 	{
+$error = false;
 
-		$json  = file_get_contents('https://api.guildwars2.com/v2/commerce/listings/' . $item_id);
-		$data  = json_decode($json, true);
-		$buys  = $data['buys'];
-		$sells = $data['sells'];
-
-		$total_buys           = 0;
-		$total_buys_in_top    = 0;
-		$total_buys_in_bottom = 0;
-		$high_buy             = 0;
-		$first                = true;
-		$last                 = 0;
-		foreach ($buys as $buy)
-		{
-			if ($first)
-			{
-				$high_buy = $buy['unit_price'];
-				$first    = false;
-			}
-			if ($buy['unit_price'] > $high_buy * .75)
-			{
-				$total_buys_in_top += $buy['listings'] * $buy['quantity'];
-			}
-			if ($buy['unit_price'] < $high_buy * .25)
-			{
-				$total_buys_in_bottom += $buy['listings'] * $buy['quantity'];
-			}
-			$total_buys += $buy['listings'] * $buy['quantity'];
-			$last = $buy['unit_price'];
+			$json = @file_get_contents('https://api.guildwars2.com/v2/commerce/listings/' . $item_id);
+		if ($json === FALSE) {
+			$error = true;
 		}
-		$buy_data              = array(
-			'high_buy'             => $high_buy,
-			'crazy_buy'          => $last,
-			'total_buys_in_top'    => $total_buys_in_top,
-			'total_buys_in_bottom' => $total_buys_in_bottom,
-			'total_buys'           => $total_buys
-		);
-		$total_sells           = 0;
-		$total_sells_in_top    = 0;
-		$total_sells_in_bottom = 0;
-		$low_sell              = 0;
-		$first                 = true;
-		$last                  = 0;
-		foreach ($sells as $sell)
-		{
-			if ($first)
-			{
-				$low_sell = $sell['unit_price'];
-				$first    = false;
-			}
-			if ($sell['unit_price'] < $low_sell * 1.25)
-			{
-				$total_sells_in_bottom += $sell['listings'] * $sell['quantity'];
-			}
-			if ($sell['unit_price'] > $low_sell * 1.75)
-			{
-				$total_sells_in_top += $sell['listings'] * $sell['quantity'];
-			}
-			$total_sells += $sell['listings'] * $sell['quantity'];
-			$last = $sell['unit_price'];
-		}
-		$sell_data = array(
-			'low_sell'              => $low_sell,
-			'crazy_sell'            => $last,
-			'total_sells_in_top'    => $total_sells_in_top,
-			'total_sells_in_bottom' => $total_sells_in_bottom,
-			'total_sells'           => $total_sells
-		);
 
+		if ($error) {
+			$buy_data              = array(
+				'high_buy'             => 0,
+				'crazy_buy'          => 0,
+				'total_buys_in_top'    => 0,
+				'total_buys_in_bottom' => 0,
+				'total_buys'           => 0
+			);
+			$sell_data = array(
+				'low_sell'              => 0,
+				'crazy_sell'            => 0,
+				'total_sells_in_top'    => 0,
+				'total_sells_in_bottom' => 0,
+				'total_sells'           => 0
+			);
+		} else
+		{
+			$data  = json_decode($json, true);
+			$buys  = $data['buys'];
+			$sells = $data['sells'];
+
+			$total_buys           = 0;
+			$total_buys_in_top    = 0;
+			$total_buys_in_bottom = 0;
+			$high_buy             = 0;
+			$first                = true;
+			$last                 = 0;
+			foreach ($buys as $buy)
+			{
+				if ($first)
+				{
+					$high_buy = $buy['unit_price'];
+					$first    = false;
+				}
+				if ($buy['unit_price'] > $high_buy * .75)
+				{
+					$total_buys_in_top += $buy['listings'] * $buy['quantity'];
+				}
+				if ($buy['unit_price'] < $high_buy * .25)
+				{
+					$total_buys_in_bottom += $buy['listings'] * $buy['quantity'];
+				}
+				$total_buys += $buy['listings'] * $buy['quantity'];
+				$last = $buy['unit_price'];
+			}
+			$buy_data              = array(
+				'high_buy'             => $high_buy,
+				'crazy_buy'            => $last,
+				'total_buys_in_top'    => $total_buys_in_top,
+				'total_buys_in_bottom' => $total_buys_in_bottom,
+				'total_buys'           => $total_buys
+			);
+			$total_sells           = 0;
+			$total_sells_in_top    = 0;
+			$total_sells_in_bottom = 0;
+			$low_sell              = 0;
+			$first                 = true;
+			$last                  = 0;
+			foreach ($sells as $sell)
+			{
+				if ($first)
+				{
+					$low_sell = $sell['unit_price'];
+					$first    = false;
+				}
+				if ($sell['unit_price'] < $low_sell * 1.25)
+				{
+					$total_sells_in_bottom += $sell['listings'] * $sell['quantity'];
+				}
+				if ($sell['unit_price'] > $low_sell * 1.75)
+				{
+					$total_sells_in_top += $sell['listings'] * $sell['quantity'];
+				}
+				$total_sells += $sell['listings'] * $sell['quantity'];
+				$last = $sell['unit_price'];
+			}
+			$sell_data = array(
+				'low_sell'              => $low_sell,
+				'crazy_sell'            => $last,
+				'total_sells_in_top'    => $total_sells_in_top,
+				'total_sells_in_bottom' => $total_sells_in_bottom,
+				'total_sells'           => $total_sells
+			);
+		}
 		return array($buy_data, $sell_data);
 	}
 
