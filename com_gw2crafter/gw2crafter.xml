@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.0" method="upgrade">
+    <name>com_gw2crafter</name>
+    <creationDate>2017-10-05</creationDate>
+    <copyright>2017 Jennifer Nodwell</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <author>Jennifer Nodwell</author>
+    <authorEmail>jennifer@nodwell.net</authorEmail>
+    <authorUrl>http://gw2crafting.nodwell.net</authorUrl>
+    <version>CVS: 1.0.0</version>
+    <description>Component to track prices and profits on crafting in Guild Wars 2</description>
+    
+    
+    
+    <install> <!-- Runs on install -->
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    <update> <!-- Runs on update -->
+        <sql>
+            <file driver="mysql" charset="utf8">sql/update.mysql.utf8.sql</file>
+        </sql>
+    </update>
+    <uninstall> <!-- Runs on uninstall -->
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+
+    <files folder="site">
+        <filename>index.html</filename>
+        <filename>gw2crafter.php</filename>
+        <filename>controller.php</filename>
+        <filename>router.php</filename>
+        <folder>views</folder>
+        <folder>models</folder>
+        <folder>controllers</folder>
+        <folder>helpers</folder>
+    </files>
+    <media destination="com_gw2crafter" folder="media">
+        <folder>js</folder>
+        <folder>css</folder>
+        <folder>images</folder>
+    </media>
+    <cli destination="cli" folder="cli">
+        <filename>update_gw2_api.php</filename>
+    </cli>
+    <languages folder="site/languages">
+        
+			<language tag="en-GB">en-GB/en-GB.com_gw2crafter.ini</language>
+    </languages>
+    <administration>
+        <menu img="media/com_gw2crafter/images/s_com_gw2crafter.png" >COM_GW2CRAFTER</menu>
+        <submenu>
+            
+			<menu link="option=com_gw2crafter&amp;view=items" view="items" img="media/com_gw2crafter/images/s_items.png" alt="Gw2crafter/Items">COM_GW2CRAFTER_TITLE_ITEMS</menu>
+            <menu link="option=com_gw2crafter&amp;view=recipes" view="recipes" img="media/com_gw2crafter/images/s_items.png" alt="Gw2crafter/Recipes">COM_GW2CRAFTER_TITLE_RECIPES</menu>
+
+        </submenu>
+        <files folder="administrator">
+            <filename>access.xml</filename>
+            <filename>config.xml</filename>
+            <filename>controller.php</filename>
+            <filename>index.html</filename>
+            <filename>gw2crafter.php</filename>
+            <folder>controllers</folder>
+            <folder>assets</folder>
+            <folder>helpers</folder>
+            <folder>models</folder>
+            <folder>sql</folder>
+            <folder>tables</folder>
+            <folder>views</folder>
+        </files>
+        <languages folder="administrator/languages">
+            
+			<language tag="en-GB">en-GB/en-GB.com_gw2crafter.ini</language>
+			<language tag="en-GB">en-GB/en-GB.com_gw2crafter.sys.ini</language>
+        </languages>
+    </administration>
+    <config>
+        <fields name="params">
+            <fieldset name="component">
+                <field name="save_history" default="0" />
+            </fieldset>
+        </fields>
+    </config>
+    <plugins>
+        <plugin group="search" plugin="gw2crafter"/>
+    </plugins>
+    
+</extension>

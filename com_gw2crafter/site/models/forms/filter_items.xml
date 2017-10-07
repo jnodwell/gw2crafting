@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field name="search" type="text" hint="COM_GW2CRAFTER_SEARCH_FILTER_SUBMIT"
+               label="COM_USERS_FILTER_SEARCH_DESC"
+               class="js-stools-search-string"/>
+        <field
+                name="type"
+                type="gw2itemtype"
+                label="COM_GW2CRAFTER_JOPTION_FILTER_GW2_ITEM_TYPE"
+                hint="COM_GW2CRAFTER_JOPTION_FILTER_GW2_ITEM_TYPE_HINT"
+                description="Filter by Item Type"
+                onchange="this.form.submit();"
+        >
+            <option value="Armor">COM_GW2CRAFTER_GW2_ITEM_TYPE_ARMOR</option>
+            <option value="Back">COM_GW2CRAFTER_GW2_ITEM_TYPE_BACK</option>
+            <option value="Bag">COM_GW2CRAFTER_GW2_ITEM_TYPE_BAG</option>
+            <option value="Consumable">COM_GW2CRAFTER_GW2_ITEM_TYPE_CONSUMABLE</option>
+            <option value="CraftingMaterial">COM_GW2CRAFTER_GW2_ITEM_TYPE_CRAFTINGMATERIAL</option>
+            <option value="Gathering">COM_GW2CRAFTER_GW2_ITEM_TYPE_GATHERING</option>
+            <option value="Gizmo">COM_GW2CRAFTER_GW2_ITEM_TYPE_GIZMO</option>
+            <option value="MiniPet">COM_GW2CRAFTER_GW2_ITEM_TYPE_MINIPET</option>
+            <option value="Tool">COM_GW2CRAFTER_GW2_ITEM_TYPE_TOOL</option>
+            <option value="Trinket">COM_GW2CRAFTER_GW2_ITEM_TYPE_TRINKET</option>
+            <option value="Trophy">COM_GW2CRAFTER_GW2_ITEM_TYPE_TROPHY</option>
+            <option value="UpgradeComponent">COM_GW2CRAFTER_GW2_ITEM_TYPE_UPGRADECOMPONENT</option>
+            <option value="Weapon">COM_GW2CRAFTER_GW2_ITEM_TYPE_WEAPON</option>
+            <option value="*">JALL</option>
+        </field>
+        <field
+                name="rarity"
+                type="gw2itemrarity"
+                label="COM_GW2CRAFTER_JOPTION_FILTER_GW2_ITEM_RARITY"
+                hint="COM_GW2CRAFTER_JOPTION_FILTER_GW2_ITEM_RARITY_HINT"
+                description="Filter by Item Rarity"
+                onchange="this.form.submit();"
+        >
+
+            <option value="Junk">COM_GW2CRAFTER_GW2_ITEM_RARITY_JUNK</option>
+            <option value="Basic">COM_GW2CRAFTER_GW2_ITEM_RARITY_BASIC</option>
+            <option value="Fine">COM_GW2CRAFTER_GW2_ITEM_RARITY_FINE</option>
+            <option value="Masterwork">COM_GW2CRAFTER_GW2_ITEM_RARITY_MASTERWORK</option>
+            <option value="Rare">COM_GW2CRAFTER_GW2_ITEM_RARITY_RARE</option>
+            <option value="Exotic">COM_GW2CRAFTER_GW2_ITEM_RARITY_EXOTIC</option>
+            <option value="Ascended">COM_GW2CRAFTER_GW2_ITEM_RARITY_ASCENDED</option>
+            <option value="Legendary">COM_GW2CRAFTER_GW2_ITEM_RARITY_LEGENDARY</option>
+            <option value="*">JALL</option>
+        </field>
+    </fields>
+</form>

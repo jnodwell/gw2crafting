@@ -1,0 +1,193 @@
+<?php
+
+/**
+ * @version    CVS: 1.0.0
+ * @package    Com_Gw2crafter
+ * @author     Jennifer Nodwell <jennifer@nodwell.net>
+ * @copyright  2017 Jennifer Nodwell
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ */
+defined('_JEXEC') or die;
+
+JLoader::register('Gw2crafterHelper', JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_gw2crafter' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'gw2crafter.php');
+
+/**
+ * Class Gw2crafterFrontendHelper
+ *
+ * @since  1.6
+ */
+class Gw2crafterHelpersGw2crafter
+{
+	protected $gw2API_v2_commercelistings = 'https://api.guildwars2.com/v2/commerce/listings/';
+	/**
+	 * Get an instance of the named model
+	 *
+	 * @param   string  $name  Model name
+	 *
+	 * @return null|object
+	 */
+	public static function getModel($name)
+	{
+		$model = null;
+
+		// If the file exists, let's
+		if (file_exists(JPATH_SITE . '/components/com_gw2crafter/models/' . strtolower($name) . '.php'))
+		{
+			require_once JPATH_SITE . '/components/com_gw2crafter/models/' . strtolower($name) . '.php';
+			$model = JModelLegacy::getInstance($name, 'Gw2crafterModel');
+		}
+
+		return $model;
+	}
+
+	/**
+	 * Gets the files attached to an item
+	 *
+	 * @param   int     $pk     The item's id
+	 *
+	 * @param   string  $table  The table's name
+	 *
+	 * @param   string  $field  The field's name
+	 *
+	 * @return  array  The files
+	 */
+	public static function getFiles($pk, $table, $field)
+	{
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query
+			->select($field)
+			->from($table)
+			->where('id = ' . (int) $pk);
+
+		$db->setQuery($query);
+
+		return explode(',', $db->loadResult());
+	}
+
+	public static function getVendorPriceFormatted($id)
+	{
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query
+			->select('gw2_item_vendor_value')
+			->from('#__gw2crafter_api_item')
+			->where('id = ' . (int) $id);
+
+		$db->setQuery($query);
+
+		$intvalue = (int) $db->loadResult();
+
+		$gold   = 0;
+		$silver = 0;
+		$copper = 0;
+
+		if ($intvalue > 9999)
+		{
+			//there is gold
+			$gold     = floor($intvalue / 10000);
+			$intvalue = $intvalue - $gold * 10000;
+		}
+		if ($intvalue > 99)
+		{
+			//there is silver
+			$silver   = floor($intvalue / 100);
+			$intvalue = $intvalue - (int) $silver * 100;
+		}
+		$copper = $intvalue;
+
+		$price = $gold > 9 ? (int) $gold : '0' . (int) $gold;
+		$price .= '<img src="/media/com_gw2crafter/images/Gold_coin.png" style="padding-left:5px;padding-right:10px;" />';
+		$price .= $silver > 9 ? (int) $silver : '0' . (int) $silver;
+		$price .= '<img src="/media/com_gw2crafter/images/Silver_coin.png" style="padding-left:5px;padding-right:10px;" />';
+		$price .= $copper > 9 ? (int) $copper : '0' . (int) $copper;
+		$price .= '<img src="/media/com_gw2crafter/images/Copper_coin.png" style="padding-left:5px;padding-right:10px;" />';
+
+		return $price;
+	}
+	public static function getApiPrice($item_id, $buy = true)
+	{
+
+		$json = file_get_contents('https://api.guildwars2.com/v2/commerce/listings/'.$item_id);
+		$data = json_decode($json, true);
+		$buys = $data['buys'];
+		$sells = $data['sells'];
+
+		if ($buy) {
+			$intvalue = (int) $buys[0]['unit_price'];
+		} else {
+			$intvalue = (int) $sells[0]['unit_price'];
+		}
+
+		return $intvalue;
+	}
+
+	public static function getPriceFormatted($price)
+	{
+
+		$intvalue = (int) $price;
+
+		$gold   = 0;
+		$silver = 0;
+		$copper = 0;
+
+		if ($intvalue > 9999)
+		{
+			//there is gold
+			$gold     = floor($intvalue / 10000);
+			$intvalue = $intvalue - $gold * 10000;
+		}
+		if ($intvalue > 99)
+		{
+			//there is silver
+			$silver   = floor($intvalue / 100);
+			$intvalue = $intvalue - (int) $silver * 100;
+		}
+		$copper = $intvalue;
+
+		$price = $gold > 9 ? (int) $gold : '0' . (int) $gold;
+		$price .= '<img src="/media/com_gw2crafter/images/Gold_coin.png" style="padding-left:5px;padding-right:10px;" />';
+		$price .= $silver > 9 ? (int) $silver : '0' . (int) $silver;
+		$price .= '<img src="/media/com_gw2crafter/images/Silver_coin.png" style="padding-left:5px;padding-right:10px;" />';
+		$price .= $copper > 9 ? (int) $copper : '0' . (int) $copper;
+		$price .= '<img src="/media/com_gw2crafter/images/Copper_coin.png" style="padding-left:5px;padding-right:10px;" />';
+
+		return $price;
+	}
+
+    /**
+     * Gets the edit permission for an user
+     *
+     * @param   mixed  $item  The item
+     *
+     * @return  bool
+     */
+    public static function canUserEdit($item)
+    {
+        $permission = false;
+        $user       = JFactory::getUser();
+
+        if ($user->authorise('core.edit', 'com_gw2crafter'))
+        {
+            $permission = true;
+        }
+        else
+        {
+            if (isset($item->created_by))
+            {
+                if ($user->authorise('core.edit.own', 'com_gw2crafter') && $item->created_by == $user->id)
+                {
+                    $permission = true;
+                }
+            }
+            else
+            {
+                $permission = true;
+            }
+        }
+
+        return $permission;
+    }
+}

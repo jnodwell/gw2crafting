@@ -1,0 +1,78 @@
+.icon-48-items {
+      background-image: url(../images/l_items.png);
+      padding-left:60px!important;
+}
+
+.icon-48-item {
+      background-image: url(../images/l_items.png);
+      padding-left:60px!important;
+}
+
+.color-box-items { 
+      float: left;      width: 15px;      height: 15px;      margin-right: 5px;      border: 1px solid rgba(0, 0, 0, .2);}
+
+.other-filters{
+    padding: 0 14px;
+}
+
+div.item_container {
+      clear:both;
+      float:left;
+      width:100%;
+}
+
+div.item_details {
+      float:left;
+      width:49%;
+      margin:0;
+      padding-right:1%;
+}
+div.item_prices {
+      float:right;
+      width:49%;
+      margin:0;
+      padding-left:1%;
+}
+table.item_prices {
+      border: 1px solid #0000C0;
+      margin-top:20px;
+}
+table.item_prices td {
+      padding:1px;
+      border: 1px solid #0B55C4;
+}
+
+img.item_details {
+      float:left;
+      margin-right: 10px;
+}
+
+.legendary {
+      color: #4C139D
+}
+
+.ascended {
+      color: #fb3e8d;
+}
+
+.exotic {
+      color: #ffa405;
+}
+
+.rare {
+      color: #fcd00b;
+}
+
+.masterwork {
+      color: #1a9306;
+}
+
+.fine {
+      color: #62A4DA;
+}
+.basic {
+
+}
+.junk {
+      color: #AAA;
+}
