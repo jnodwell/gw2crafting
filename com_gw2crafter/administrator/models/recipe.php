@@ -191,6 +191,20 @@ class Gw2crafterModelRecipe extends JModelAdmin
 			$db = JFactory::getDBO();
 			$db->insertObject( '#__gw2crafter_recipe_items', $data2 );
 		}
+		$count = 0;
+		foreach($json_data['disciplines'] as $discipline) {
+			$data3 = new stdClass();
+			$data3->id = null;
+			$data3->state = 1;
+			$data3->created_by = '635';
+			$data3->modified_by = '635';
+			$data3->ordering = $count++;
+			$data3->gw2crafter_api_recipe_id = $json_data['id'];
+			$data3->gw2crafter_api_discipline = $discipline;
+
+			$db = JFactory::getDBO();
+			$db->insertObject( '#__gw2crafter_api_discipline', $data3 );
+		}
 		echo $name . ' done';
 	}
 
