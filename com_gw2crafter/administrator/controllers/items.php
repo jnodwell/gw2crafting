@@ -115,11 +115,16 @@ class Gw2crafterControllerItems extends JControllerAdmin
 		$count = 0;
 		foreach ($data as $key => $gw2_item_id) {
 			$model = $this->getModel();
-			if ($model->getItemByGw2Id($gw2_item_id) == 0) {
+			if ($model->getItemByGw2Id($gw2_item_id) == 0 && $gw2_item_id != 0) {
 				//we need to create a new row here
 				$new_json = file_get_contents($this->gw2API_v2_items . '/' . $gw2_item_id);
 				$item_data = json_decode($new_json,true);
-				$model->addFromJson($item_data);
+				try
+				{
+					$model->addFromJson($item_data);
+				} catch (Exception $e) {
+					//fail gracefully
+				}
 			}
 			$count++;
 		}
