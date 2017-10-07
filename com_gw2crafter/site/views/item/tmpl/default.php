@@ -11,7 +11,11 @@ defined('_JEXEC') or die;
 $document = JFactory::getDocument();
 $url      = JUri::base() . 'administrator/components/com_gw2crafter/assets/css/gw2crafter.css';
 $document->addStyleSheet($url);
-
+$app = JFactory::getApplication();
+$pathway = $app->getPathway();
+$breadcrumb = $pathway->setPathway(array());
+$pathway->addItem( JText::_( 'Item Database' ),JRoute::_('index.php?option=com_gw2crafter&view=items&Itemid=104'));
+$pathway->addItem( $this->item->gw2_item_name,'');
 $this->loadHelper('gw2crafter');
 $price_data  = Gw2crafterHelpersGw2crafter::getApiPriceArray($this->item->gw2_item_id);
 $marketdata = true;
@@ -65,7 +69,7 @@ if ($buy == 0 && $sell == 0) {
 					<?php echo JText::_('Low'); ?> : <?php echo $price_data[1]['total_sells_in_bottom']; ?></td>
 			</tr>
 			<tr>
-				<td colspan="4" class="center">B:S = <?php echo number_format($buy / $sell, 4); ?>&nbsp;&nbsp;C:B
+				<td colspan="4" class="center">B:S = <?php echo $sell != 0 ? number_format($buy / $sell, 4) : 0; ?>&nbsp;&nbsp;C:B
 					= <?php echo number_format($buy / $cost, 4); ?>&nbsp;&nbsp;P:L = <?php echo number_format($sell
 						/ ($sell - $sell * .05 - $sell * .1 - $cost), 4); ?>%
 				</td>
