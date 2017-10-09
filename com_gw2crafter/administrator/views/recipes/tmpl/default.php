@@ -37,7 +37,7 @@ $sortFields = $this->getSortFields();
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_gw2crafter&view=recipes'); ?>" method="post"
-	  name="adminForm" id="adminForm">
+      name="adminForm" id="adminForm">
 	<?php if (!empty($this->sidebar)): ?>
 	<div id="j-sidebar-container" class="span2">
 		<?php echo $this->sidebar; ?>
@@ -47,7 +47,7 @@ $sortFields = $this->getSortFields();
 		<div id="j-main-container">
 			<?php endif; ?>
 
-            <?php echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+			<?php echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
 
 			<div class="clearfix"></div>
 			<table class="table table-striped" id="recipeList">
@@ -55,33 +55,38 @@ $sortFields = $this->getSortFields();
 				<tr>
 					<?php if (isset($this->items[0]->ordering)): ?>
 						<th width="1%" class="nowrap center hidden-phone">
-                            <?php echo JHtml::_('searchtools.sort', '', 'a.`ordering`', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-menu-2'); ?>
-                        </th>
+							<?php echo JHtml::_('searchtools.sort', '', 'a.`ordering`', $listDirn, $listOrder, null,
+								'asc', 'JGRID_HEADING_ORDERING', 'icon-menu-2'); ?>
+						</th>
 					<?php endif; ?>
 					<th width="1%" class="hidden-phone">
 						<input type="checkbox" name="checkall-toggle" value=""
-							   title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)"/>
+						       title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)"/>
 					</th>
 					<?php if (isset($this->items[0]->state)): ?>
 						<th width="1%" class="nowrap center">
-								<?php echo JHtml::_('searchtools.sort', 'JSTATUS', 'a.`state`', $listDirn, $listOrder); ?>
-</th>
+							<?php echo JHtml::_('searchtools.sort', 'JSTATUS', 'a.`state`', $listDirn, $listOrder); ?>
+						</th>
 					<?php endif; ?>
 
-									<th class='left' width="5%">
-				<?php echo JHtml::_('searchtools.sort',  'COM_GW2CRAFTER_RECIPES_ID', 'a.`id`', $listDirn, $listOrder); ?>
-				</th>
-				<th class='left' width="5%">
-				<?php echo JHtml::_('searchtools.sort',  'COM_GW2CRAFTER_RECIPES_GW2_RECIPE_ID', 'a.`gw2_recipe_id`', $listDirn, $listOrder); ?>
-				</th>
-					<th class='left'>
-						<?php echo JHtml::_('searchtools.sort',  'COM_GW2CRAFTER_RECIPES_GW2_RECIPE_TYPE', 'a.`gw2_recipe_type`', $listDirn, $listOrder); ?>
+					<th class='left' width="5%">
+						<?php echo JHtml::_('searchtools.sort', 'COM_GW2CRAFTER_RECIPES_ID', 'a.`id`', $listDirn,
+							$listOrder); ?>
 					</th>
-				<th class='left'>
-				<?php echo JHtml::_('searchtools.sort',  'COM_GW2CRAFTER_RECIPES_GW2_RECIPE_NAME', 'a.`gw2_recipe_name`', $listDirn, $listOrder); ?>
-				</th>
+					<th class='left' width="5%">
+						<?php echo JHtml::_('searchtools.sort', 'COM_GW2CRAFTER_RECIPES_GW2_RECIPE_ID',
+							'a.`gw2_recipe_id`', $listDirn, $listOrder); ?>
+					</th>
+					<th class='left'>
+						<?php echo JHtml::_('searchtools.sort', 'COM_GW2CRAFTER_RECIPES_GW2_RECIPE_TYPE',
+							'a.`gw2_recipe_type`', $listDirn, $listOrder); ?>
+					</th>
+					<th class='left'>
+						<?php echo JHtml::_('searchtools.sort', 'COM_GW2CRAFTER_RECIPES_GW2_RECIPE_NAME',
+							'a.`gw2_recipe_name`', $listDirn, $listOrder); ?>
+					</th>
 
-					
+
 				</tr>
 				</thead>
 				<tfoot>
@@ -93,11 +98,11 @@ $sortFields = $this->getSortFields();
 				</tfoot>
 				<tbody>
 				<?php foreach ($this->items as $i => $item) :
-					$ordering   = ($listOrder == 'a.ordering');
-					$canCreate  = $user->authorise('core.create', 'com_gw2crafter');
-					$canEdit    = $user->authorise('core.edit', 'com_gw2crafter');
+					$ordering = ($listOrder == 'a.ordering');
+					$canCreate = $user->authorise('core.create', 'com_gw2crafter');
+					$canEdit = $user->authorise('core.edit', 'com_gw2crafter');
 					$canCheckin = $user->authorise('core.manage', 'com_gw2crafter');
-					$canChange  = $user->authorise('core.edit.state', 'com_gw2crafter');
+					$canChange = $user->authorise('core.edit.state', 'com_gw2crafter');
 					?>
 					<tr class="row<?php echo $i % 2; ?>">
 
@@ -105,18 +110,18 @@ $sortFields = $this->getSortFields();
 							<td class="order nowrap center hidden-phone">
 								<?php if ($canChange) :
 									$disableClassName = '';
-									$disabledLabel    = '';
+									$disabledLabel = '';
 
 									if (!$saveOrder) :
 										$disabledLabel    = JText::_('JORDERINGDISABLED');
 										$disableClassName = 'inactive tip-top';
 									endif; ?>
 									<span class="sortable-handler hasTooltip <?php echo $disableClassName ?>"
-										  title="<?php echo $disabledLabel ?>">
+									      title="<?php echo $disabledLabel ?>">
 							<i class="icon-menu"></i>
 						</span>
 									<input type="text" style="display:none" name="order[]" size="5"
-										   value="<?php echo $item->ordering; ?>" class="width-20 text-area-order "/>
+									       value="<?php echo $item->ordering; ?>" class="width-20 text-area-order "/>
 								<?php else : ?>
 									<span class="sortable-handler inactive">
 							<i class="icon-menu"></i>
@@ -129,28 +134,36 @@ $sortFields = $this->getSortFields();
 						</td>
 						<?php if (isset($this->items[0]->state)): ?>
 							<td class="center">
-								<?php echo JHtml::_('jgrid.published', $item->state, $i, 'recipes.', $canChange, 'cb'); ?>
-</td>
+								<?php echo JHtml::_('jgrid.published', $item->state, $i, 'recipes.', $canChange,
+									'cb'); ?>
+							</td>
 						<?php endif; ?>
 
-										<td>
+						<td>
 
-					<?php echo $item->id; ?>
-				</td>				<td>
+							<?php echo $item->id; ?>
+						</td>
+						<td>
 
-					<?php echo $item->gw2_item_id; ?>
-				</td>				<td>
-				<?php if (isset($item->checked_out) && $item->checked_out && ($canEdit || $canChange)) : ?>
-					<?php echo JHtml::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'recipes.', $canCheckin); ?>
-				<?php endif; ?>
-				<?php if ($canEdit) : ?>
-					<a href="<?php echo JRoute::_('index.php?option=com_gw2crafter&task=recipe.edit&id='.(int) $item->id); ?>">
-					<?php echo $this->escape($item->gw2_created_item_id); ?></a>
-				<?php else : ?>
-					<?php echo $this->escape($item->gw2_created_item_id); ?>
-				<?php endif; ?>
+							<?php echo $item->gw2_recipe_id; ?>
+						</td>
+						<td>
+							<?php echo $item->gw2_recipe_type; ?>
+						</td>
+						<td>
+							<?php if (isset($item->checked_out) && $item->checked_out && ($canEdit || $canChange)) : ?>
+								<?php echo JHtml::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time,
+									'recipes.', $canCheckin); ?>
+							<?php endif; ?>
+							<?php if ($canEdit) : ?>
+								<a href="<?php echo JRoute::_('index.php?option=com_gw2crafter&task=recipe.edit&id='
+									. (int) $item->id); ?>">
+									<?php echo $this->escape($item->gw2_recipe_name); ?></a>
+							<?php else : ?>
+								<?php echo $this->escape($item->gw2_recipe_name); ?>
+							<?php endif; ?>
 
-				</td>
+						</td>
 
 					</tr>
 				<?php endforeach; ?>
@@ -159,37 +172,37 @@ $sortFields = $this->getSortFields();
 
 			<input type="hidden" name="task" value=""/>
 			<input type="hidden" name="boxchecked" value="0"/>
-            <input type="hidden" name="list[fullorder]" value="<?php echo $listOrder; ?> <?php echo $listDirn; ?>"/>
+			<input type="hidden" name="list[fullorder]" value="<?php echo $listOrder; ?> <?php echo $listDirn; ?>"/>
 			<?php echo JHtml::_('form.token'); ?>
 		</div>
 </form>
 <script>
-    window.toggleField = function (id, task, field) {
+	window.toggleField = function (id, task, field) {
 
-        var f = document.adminForm, i = 0, cbx, cb = f[ id ];
+		var f = document.adminForm, i = 0, cbx, cb = f[id];
 
-        if (!cb) return false;
+		if (!cb) return false;
 
-        while (true) {
-            cbx = f[ 'cb' + i ];
+		while (true) {
+			cbx = f['cb' + i];
 
-            if (!cbx) break;
+			if (!cbx) break;
 
-            cbx.checked = false;
-            i++;
-        }
+			cbx.checked = false;
+			i++;
+		}
 
-        var inputField   = document.createElement('input');
+		var inputField = document.createElement('input');
 
-        inputField.type  = 'hidden';
-        inputField.name  = 'field';
-        inputField.value = field;
-        f.appendChild(inputField);
+		inputField.type = 'hidden';
+		inputField.name = 'field';
+		inputField.value = field;
+		f.appendChild(inputField);
 
-        cb.checked = true;
-        f.boxchecked.value = 1;
-        window.submitform(task);
+		cb.checked = true;
+		f.boxchecked.value = 1;
+		window.submitform(task);
 
-        return false;
-    };
+		return false;
+	};
 </script>

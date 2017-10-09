@@ -114,7 +114,7 @@ class Gw2crafterHelpersGw2crafter
 	public static function getApiPrice($item_id, $buy = true)
 	{
 
-		$json  = file_get_contents('https://api.guildwars2.com/v2/commerce/listings/' . $item_id);
+		$json  = @file_get_contents('https://api.guildwars2.com/v2/commerce/listings/' . $item_id);
 		$data  = json_decode($json, true);
 		$buys  = $data['buys'];
 		$sells = $data['sells'];
@@ -133,17 +133,19 @@ class Gw2crafterHelpersGw2crafter
 
 	public static function getApiPriceArray($item_id)
 	{
-$error = false;
+		$error = false;
 
-			$json = @file_get_contents('https://api.guildwars2.com/v2/commerce/listings/' . $item_id);
-		if ($json === FALSE) {
+		$json = @file_get_contents('https://api.guildwars2.com/v2/commerce/listings/' . $item_id);
+		if ($json === false)
+		{
 			$error = true;
 		}
 
-		if ($error) {
-			$buy_data              = array(
+		if ($error)
+		{
+			$buy_data  = array(
 				'high_buy'             => 0,
-				'crazy_buy'          => 0,
+				'crazy_buy'            => 0,
 				'total_buys_in_top'    => 0,
 				'total_buys_in_bottom' => 0,
 				'total_buys'           => 0
@@ -155,7 +157,8 @@ $error = false;
 				'total_sells_in_bottom' => 0,
 				'total_sells'           => 0
 			);
-		} else
+		}
+		else
 		{
 			$data  = json_decode($json, true);
 			$buys  = $data['buys'];
@@ -224,6 +227,7 @@ $error = false;
 				'total_sells'           => $total_sells
 			);
 		}
+
 		return array($buy_data, $sell_data);
 	}
 
@@ -231,11 +235,12 @@ $error = false;
 	{
 
 		$intvalue = (int) $price;
-		$loss = false;
+		$loss     = false;
 
-		if ($intvalue < 0) {
+		if ($intvalue < 0)
+		{
 			$intvalue = abs($intvalue);
-			$loss = true;
+			$loss     = true;
 		}
 
 		$gold   = 0;
@@ -263,9 +268,11 @@ $error = false;
 		$price .= $copper > 9 ? (int) $copper : '0' . (int) $copper;
 		$price .= '<img src="/media/com_gw2crafter/images/Copper_coin.png" style="padding-left:5px;padding-right:10px;" />';
 
-		if ($loss) {
+		if ($loss)
+		{
 			$price = "<span style=\"color:red;\">" . $price . "</span>";
 		}
+
 		return $price;
 	}
 
@@ -301,5 +308,126 @@ $error = false;
 		}
 
 		return $permission;
+	}
+
+	public static function itemHasRecipe($gw2_item_id)
+	{
+		$db    = JFactory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query
+			->select('gw2_recipe_id')
+			->from('#__gw2crafter_api_recipe')
+			->where('gw2_created_item_id = ' . (int) $gw2_item_id);
+
+		$db->setQuery($query);
+
+		$intvalue = (int) $db->loadResult();
+
+		return $intvalue;
+	}
+
+	public static function getItemNameByGw2Id($gw2id)
+	{
+		$db    = JFactory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query
+			->select('gw2_item_name')
+			->from('#__gw2crafter_api_item')
+			->where('gw2_item_id = ' . (int) $gw2id);
+
+		$db->setQuery($query);
+
+		$name = $db->loadResult();
+
+		return $name;
+	}
+
+	public static function getRecipeArray($gw2_item_id)
+	{
+		$db    = JFactory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query
+			->select('*')
+			->from('#__gw2crafter_api_recipe')
+			->where('gw2_created_item_id = ' . (int) $gw2_item_id);
+
+		$db->setQuery($query);
+
+		$row = $db->loadObject();
+if ($row)
+{
+
+	$recipeId              = $row->gw2_recipe_id;
+	$gw2_recipe_type       = $row->gw2_recipe_type;
+	$gw2_recipe_min_rating = $row->gw2_recipe_min_rating;
+	$gw2_output_item_count = $row->gw2_output_item_count;
+	$recipe                = array(
+		'gw2_recipe_type'       => $gw2_recipe_type,
+		'gw2_recipe_min_rating' => $gw2_recipe_min_rating,
+		'gw2_output_item_count' => $gw2_output_item_count,
+		'row_id'                => $row->id,
+		'recipe_items'          => array(),
+	);
+	$query                 = $db->getQuery(true);
+	$query
+		->select('*')
+		->from('#__gw2crafter_recipe_items')
+		->where('gw2crafter_api_recipe_id = ' . (int) $recipeId);
+
+	$db->setQuery($query);
+
+	$result   = $db->loadObjectList();
+	$itemlist = array();
+	foreach ($result as $row)
+	{
+
+		$recipe_row = array(
+			'qty'       => $row->qty,
+			'item_id'   => $row->gw2crafter_api_item_id,
+			'item_name' => self::getItemNameByGw2Id($row->gw2crafter_api_item_id),
+		);
+		$itemlist[] = $recipe_row;
+	}
+	$recipe['recipe_items'] = $itemlist;
+
+	return $recipe;
+}
+return false;
+	}
+
+	public static function getExpandedRecipeArray($gw2_item_id,$parentqty)
+	{
+		$recipe       = self::getRecipeArray($gw2_item_id);
+		$recipe_items = $recipe['recipe_items'];
+		$itemlist = array();
+
+		foreach ($recipe_items as $row)
+		{
+			$haschild = false;
+			if (self::itemHasRecipe($row['item_id']))
+			{
+				$haschild = true;
+			}
+			$itemlist[] = array(
+				'qty'       => $row['qty'],
+				'item_id'   => $row['item_id'],
+				'item_name' => $row['item_name'],
+				'parentqty' => $parentqty,
+				'has_child' => $haschild,
+			);
+			if ($haschild)
+			{
+				foreach (self::getExpandedRecipeArray($row['item_id'],$row['qty']) as $childrow) {
+					$itemlist[] = $childrow;
+				}
+			}
+		}
+
+		$recipe['recipe_items'] = $itemlist;
+
+		return $recipe['recipe_items'];
 	}
 }

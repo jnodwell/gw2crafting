@@ -119,7 +119,12 @@ class Gw2crafterControllerRecipes extends JControllerAdmin
 				//we need to create a new row here
 				$new_json = file_get_contents($this->gw2API_v2_recipes . '/' . $gw2_recipe_id);
 				$item_data = json_decode($new_json,true);
-				$model->addFromJson($item_data);
+				try
+				{
+					$model->addFromJson($item_data);
+				} catch (Exception $e) {
+					//fail gracefully
+				}
 			}
 			$count++;
 		}

@@ -32,13 +32,15 @@ div.item_prices {
       width:69%;
       margin:0;
       padding-left:1%;
+      position:relative;
 }
 table.item_prices {
       border: 1px solid #0000C0;
       margin-top:10px;
+      width:100%;
 }
-table.item_prices td {
-      padding:1px;
+table.item_prices td, table.item_prices th {
+      padding:2px 4px;
       border: 1px solid #0B55C4;
 }
 
@@ -75,4 +77,7 @@ img.item_details {
 }
 .junk {
       color: #AAA;
+}
+td.right {
+      text-align: right;
 }

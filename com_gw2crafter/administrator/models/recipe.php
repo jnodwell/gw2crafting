@@ -166,7 +166,6 @@ class Gw2crafterModelRecipe extends JModelAdmin
 		$data->gw2_recipe_type = $json_data['type'];
 		$data->gw2_created_item_id = $json_data['output_item_id'];
 		$data->gw2_output_item_count = $json_data['output_item_count'];
-		$data->gw2_recipe_disciplines = implode(', ', $json_data['disciplines']);
 		$data->gw2_recipe_min_rating = $json_data['min_rating'];
 
 		$db = JFactory::getDBO();
@@ -203,7 +202,7 @@ class Gw2crafterModelRecipe extends JModelAdmin
 			$data3->gw2crafter_api_discipline = $discipline;
 
 			$db = JFactory::getDBO();
-			$db->insertObject( '#__gw2crafter_api_discipline', $data3 );
+			$db->insertObject( '#__gw2crafter_recipe_disciplines', $data3 );
 		}
 		echo $name . ' done';
 	}
