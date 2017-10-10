@@ -70,7 +70,7 @@ $recipe     = Gw2crafterHelpersGw2crafter::getRecipeArray($this->item->gw2_creat
 			$final_items    = array();
 			$final_names    = array();
 			foreach (
-				Gw2crafterHelpersGw2crafter::getExpandedRecipeArray($this->item->gw2_created_item_id, 1, 1) as $item
+				Gw2crafterHelpersGw2crafter::getExpandedRecipeArray($this->item->gw2_created_item_id, $this->item->gw2_output_item_count,$this->item->gw2_output_item_count, 1) as $item
 			)
 			{
 				$lastquantities[$item['depth']] = $item['qty'];
@@ -112,12 +112,14 @@ $recipe     = Gw2crafterHelpersGw2crafter::getRecipeArray($this->item->gw2_creat
 							     class="noline"><?php
 							echo $item['item_name']; ?></a>
 							<?php
-						} else {
+						}
+						else
+						{
 							echo $item['item_name'];
 						}
-						$item_qty = $item['qty'] * $item['parentqty'] / $item['makes'];
+						$item_qty = $item['qty'] * $item['parentqty'] / $item['makes'] / $item['parentmakes'];
 
-						echo ' (' . $item_qty . ')'; ?></td>
+						if ($item['depth'] > 1) { echo ' (' . $item_qty . ')';} ?></td>
 					<?php if ($item['has_child']) : ?>
 						<td></td>
 						<td></td>
@@ -152,14 +154,35 @@ $recipe     = Gw2crafterHelpersGw2crafter::getRecipeArray($this->item->gw2_creat
 				<td class="right"><?php echo Gw2crafterHelpersGw2crafter::getPriceFormatted($craftprice); ?></td>
 			</tr>
 		</table>
-		<h4>Shopping List</h4>
-		<?php
-		foreach ($final_items as $key => $qty)
-		{
-			echo "<p>" . $qty . ' ' . $final_names[$key] . "</p>";
-		}
-		?>
-
+		<div class="pane">
+			<div class="left30">
+				<h4>Shopping List</h4>
+				<?php
+				foreach ($final_items as $key => $qty)
+				{
+					echo "<p>" . $qty . ' ' . $final_names[$key] . "</p>";
+				}
+				?>
+			</div>
+			<div class="right70">
+				<?php
+				$used_in = Gw2crafterHelpersGw2crafter::getUsedIn($this->item->gw2_created_item_id);
+				if ($used_in)
+				{ ?><h4>Used In</h4>
+					<?php
+					foreach ($used_in as $u => $item_id)
+					{
+						?>
+						<p><a href="<?php echo JRoute::_('index.php?option=com_gw2crafter&view=recipe&id='
+								. (int) Gw2crafterHelpersGw2crafter::getItemRecipeRow($item_id)); ?>"
+						      class="noline"><?php
+								echo Gw2crafterHelpersGw2crafter::getItemNameByGw2RecipeId($item_id); ?></a></p>
+						<?php
+					}
+				}
+				?>
+			</div>
+		</div>
 	</div>
 </div>
 

@@ -92,3 +92,16 @@ a.noline {
       font-weight: bold;
       font-size: smaller;
 }
+.holder {
+      float:left;
+      width:100%;
+      clear:both;
+}
+.left30 {
+      float:left;
+      width:29%;
+}
+.right70 {
+      float:right;
+      width:69%;
+}

@@ -131,6 +131,18 @@ class Gw2crafterHelpersGw2crafter
 		return $intvalue;
 	}
 
+	public static function getUsedIn($gw2_item_id)
+	{
+		$json = @file_get_contents('https://api.guildwars2.com/v2/recipes/search?input=' . $gw2_item_id);
+		if ($json === false)
+		{
+			return false;
+		}
+		$data  = json_decode($json, true);
+
+		return $data;
+	}
+
 	public static function getApiPriceArray($item_id)
 	{
 		$error = false;
@@ -343,6 +355,22 @@ class Gw2crafterHelpersGw2crafter
 
 		return $name;
 	}
+	public static function getItemNameByGw2RecipeId($gw2id)
+	{
+		$db    = JFactory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query
+			->select('gw2_recipe_name')
+			->from('#__gw2crafter_api_recipe')
+			->where('gw2_recipe_id = ' . (int) $gw2id);
+
+		$db->setQuery($query);
+
+		$name = $db->loadResult();
+
+		return $name;
+	}
 
 	public static function getRecipeArray($gw2_item_id)
 	{
@@ -399,7 +427,7 @@ class Gw2crafterHelpersGw2crafter
 		return false;
 	}
 
-	public static function getExpandedRecipeArray($gw2_item_id, $parentqty, $depth)
+	public static function getExpandedRecipeArray($gw2_item_id, $parentqty, $parentmakes, $depth)
 	{
 		$recipe       = self::getRecipeArray($gw2_item_id);
 		$recipe_items = $recipe['recipe_items'];
@@ -420,14 +448,17 @@ class Gw2crafterHelpersGw2crafter
 				'item_id'   => $row['item_id'],
 				'item_name' => $row['item_name'],
 				'parentqty' => $parentqty,
+				'parentmakes'=> $parentmakes,
 				'has_child' => $haschild,
 				'makes'     => $makes,
 				'depth'     => $depth,
 			);
 			if ($haschild)
 			{
-				$qty = $qty * $parentqty;
-				foreach (self::getExpandedRecipeArray($row['item_id'], $qty, $depth + 1) as $childrow)
+				if ($depth > 1) {
+					$qty = $qty * $parentqty ;
+				}
+				foreach (self::getExpandedRecipeArray($row['item_id'], $qty, $makes, $depth + 1) as $childrow)
 				{
 					$itemlist[] = $childrow;
 				}
@@ -439,7 +470,7 @@ class Gw2crafterHelpersGw2crafter
 		return $recipe['recipe_items'];
 	}
 
-	public static function getItemRecipeRow($gw2_item_id)
+	public static function getItemRecipeRow($gw2_recipe_id)
 	{
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
@@ -447,7 +478,7 @@ class Gw2crafterHelpersGw2crafter
 		$query
 			->select('id')
 			->from('#__gw2crafter_api_recipe')
-			->where('gw2_created_item_id = ' . (int) $gw2_item_id);
+			->where('gw2_recipe_id = ' . (int) $gw2_recipe_id);
 
 		$db->setQuery($query);
 
