@@ -199,7 +199,7 @@ $recipe = Gw2crafterHelpersGw2crafter::getRecipeArray($this->item->gw2_item_id);
 			);
 			$final_items = array();
 			$final_names = array();
-			foreach (Gw2crafterHelpersGw2crafter::getExpandedRecipeArray($this->item->gw2_item_id,1,1) as $item)
+			foreach (Gw2crafterHelpersGw2crafter::getExpandedRecipeArray($this->item->gw2_item_id,1,1,1) as $item)
 			{
 				$lastquantities[$item['depth']] = $item['qty'];
 				$item_qty = $item['qty'];
@@ -235,7 +235,7 @@ $recipe = Gw2crafterHelpersGw2crafter::getRecipeArray($this->item->gw2_item_id);
 						} else {
 							echo $item['item_name'];
 						}
-						$item_qty = $item['qty'] * $item['parentqty'] / $item['makes'];
+						$item_qty = $item['qty'] * $item['parentqty'] / $item['makes'] / $item['parentmakes'];
 						/*foreach($lastquantities as $depth => $qty) {
 							if ($depth < $item['depth']) {
 								$item_qty = $item_qty * $qty;

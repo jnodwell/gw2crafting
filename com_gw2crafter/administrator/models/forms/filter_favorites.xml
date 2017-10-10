@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field name="search" type="text" hint="COM_GW2CRAFTER_SEARCH_FILTER_SUBMIT"
+               label="COM_USERS_FILTER_SEARCH_DESC"
+               class="js-stools-search-string" />
+
+        <field name="state"
+               type="status"
+               label="COM_GW2CRAFTER_FILTER_STATE"
+               description="COM_GW2CRAFTER_FILTER_STATE_DESC"
+               onchange="this.form.submit();"
+        >
+            <option value="">JOPTION_SELECT_PUBLISHED</option>
+        </field>
+
+        <field name="gw2_item_id" type="sql" label="COM_GW2CRAFTER_FORM_LBL_FAVORITE_GW2_ITEM_ID" query="SELECT '' AS `gw2_item_id`, 'COM_GW2CRAFTER_FAVORITES_GW2_ITEM_ID_FILTER' AS `val` UNION SELECT `gw2_item_id`, `gw2_item_name` AS val FROM `#__gw2crafter_api_item`" key_field="gw2_item_id" value_field="val" class="inputbox" onchange="this.form.submit()" translate="true"/>
+<field name="joomla_user_id" type="sql" label="COM_GW2CRAFTER_FORM_LBL_FAVORITE_JOOMLA_USER_ID" query="SELECT '' AS `id`, 'COM_GW2CRAFTER_FAVORITES_JOOMLA_USER_ID_FILTER' AS `val` UNION SELECT `id`, `username` AS val FROM `#__users`" key_field="id" value_field="val" class="inputbox" onchange="this.form.submit()" translate="true"/>
+
+
+    </fields>
+
+    <fields name="list">
+
+        <field name="fullordering"
+               type="list"
+               label="COM_CONTENT_LIST_FULL_ORDERING"
+               description="COM_CONTENT_LIST_FULL_ORDERING_DESC"
+               onchange="this.form.submit();"
+               default="a.id DESC"
+        >
+            <option value="">JGLOBAL_SORT_BY</option>
+            <option value="a.`id` ASC">ID Ascending</option><option value="a.`id` DESC">ID Descending</option><option value="a.`ordering` ASC">Order Ascending</option><option value="a.`ordering` DESC">Order Descending</option><option value="a.`state` ASC">State Ascending</option><option value="a.`state` DESC">State Descending</option><option value="a.`gw2_item_id` ASC">GW2 Item Ascending</option><option value="a.`gw2_item_id` DESC">GW2 Item Descending</option><option value="a.`gw2_name` ASC">Name Ascending</option><option value="a.`gw2_name` DESC">Name Descending</option><option value="a.`joomla_user_id` ASC">Joomla User Ids Ascending</option><option value="a.`joomla_user_id` DESC">Joomla User Ids Descending</option>
+
+        </field>
+
+        <field name="limit"
+               type="limitbox"
+               class="input-mini"
+               default="25"
+               onchange="this.form.submit();"
+        />
+
+    </fields>
+
+</form>

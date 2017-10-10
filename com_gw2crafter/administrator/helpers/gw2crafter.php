@@ -31,6 +31,22 @@ class Gw2crafterHelper
 			'index.php?option=com_gw2crafter&view=items',
 			$vName == 'items'
 		);
+		JHtmlSidebar::addEntry(
+			JText::_('COM_GW2CRAFTER_TITLE_RECIPES'),
+			'index.php?option=com_gw2crafter&view=recipes',
+			$vName == 'items'
+		);
+		JHtmlSidebar::addEntry(
+			JText::_('COM_GW2CRAFTER_TITLE_FAVORITES'),
+			'index.php?option=com_gw2crafter&view=favorites',
+			$vName == 'favorites'
+		);
+
+		JHtmlSidebar::addEntry(
+			JText::_('COM_GW2CRAFTER_TITLE_MEMBERVIEWS'),
+			'index.php?option=com_gw2crafter&view=memberviews',
+			$vName == 'memberviews'
+		);
 
 	}
 
