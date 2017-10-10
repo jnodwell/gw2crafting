@@ -133,8 +133,8 @@ class Gw2crafterModelFavorite extends JModelItem
 					$db = JFactory::getDbo();
 					$query = $db->getQuery(true);
 					$query
-						->select('`gw2crafter_api_item_2831653`.`gw2_item_name`')
-						->from($db->quoteName('gw2crafter_api_item', 'gw2crafter_api_item_2831653'))
+						->select('`#__gw2crafter_api_item_2831653`.`gw2_item_name`')
+						->from($db->quoteName('#__gw2crafter_api_item', '#__gw2crafter_api_item_2831653'))
 						->where($db->quoteName('gw2_item_id') . ' = ' . $db->quote($db->escape($value)));
 					$db->setQuery($query);
 					$results = $db->loadObject();

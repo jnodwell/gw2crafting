@@ -11,7 +11,7 @@
     </field>
     <field name="checked_out" type="hidden" filter="unset"/>
     <field name="checked_out_time" default="0000-00-00 00:00:00" type="hidden" filter="unset"/>
-    <field name="gw2_item_id" type="foreignkey" label="COM_GW2CRAFTER_FORM_LBL_FAVORITE_GW2_ITEM_ID" description="COM_GW2CRAFTER_FORM_DESC_FAVORITE_GW2_ITEM_ID" class="inputbox" input_type="list" table="gw2crafter_api_item" key_field="gw2_item_id" value_field="gw2_item_name" required="true" default=""/>
+    <field name="gw2_item_id" type="foreignkey" label="COM_GW2CRAFTER_FORM_LBL_FAVORITE_GW2_ITEM_ID" description="COM_GW2CRAFTER_FORM_DESC_FAVORITE_GW2_ITEM_ID" class="inputbox" input_type="list" table="#__gw2crafter_api_item" key_field="gw2_item_id" value_field="gw2_item_name" required="true" default=""/>
     <field name="gw2_name" required="true" label="COM_GW2CRAFTER_FORM_LBL_FAVORITE_GW2_NAME" description="COM_GW2CRAFTER_FORM_DESC_FAVORITE_GW2_NAME" hint="COM_GW2CRAFTER_FORM_LBL_FAVORITE_GW2_NAME"/>
     <field name="joomla_user_id" type="foreignkey" label="COM_GW2CRAFTER_FORM_LBL_FAVORITE_JOOMLA_USER_ID" description="COM_GW2CRAFTER_FORM_DESC_FAVORITE_JOOMLA_USER_ID" class="inputbox" input_type="list" table="#__users" key_field="id" value_field="username" required="true" default=""/>
     <field name="version_note" type="text" label="JGLOBAL_FIELD_VERSION_NOTE_LABEL" description="JGLOBAL_FIELD_VERSION_NOTE_DESC" class="inputbox" size="45" labelclass="control-label"/>

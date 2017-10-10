@@ -23,6 +23,8 @@ $canEdit    = $user->authorise('core.edit', 'com_gw2crafter') && file_exists(JPA
 $canCheckin = $user->authorise('core.manage', 'com_gw2crafter');
 $canChange  = $user->authorise('core.edit.state', 'com_gw2crafter');
 $canDelete  = $user->authorise('core.delete', 'com_gw2crafter');
+
+$this->loadHelper('gw2crafter');
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_gw2crafter&view=favorites'); ?>" method="post"
@@ -32,23 +34,8 @@ $canDelete  = $user->authorise('core.delete', 'com_gw2crafter');
 	<table class="table table-striped" id="favoriteList">
 		<thead>
 		<tr>
-			<?php if (isset($this->items[0]->state)): ?>
-				<th width="5%">
-	<?php echo JHtml::_('grid.sort', 'JPUBLISHED', 'a.state', $listDirn, $listOrder); ?>
-</th>
-			<?php endif; ?>
-
-							<th class=''>
-				<?php echo JHtml::_('grid.sort',  'COM_GW2CRAFTER_FAVORITES_ID', 'a.id', $listDirn, $listOrder); ?>
-				</th>
-				<th class=''>
-				<?php echo JHtml::_('grid.sort',  'COM_GW2CRAFTER_FAVORITES_GW2_ITEM_ID', 'a.gw2_item_id', $listDirn, $listOrder); ?>
-				</th>
 				<th class=''>
 				<?php echo JHtml::_('grid.sort',  'COM_GW2CRAFTER_FAVORITES_GW2_NAME', 'a.gw2_name', $listDirn, $listOrder); ?>
-				</th>
-				<th class=''>
-				<?php echo JHtml::_('grid.sort',  'COM_GW2CRAFTER_FAVORITES_JOOMLA_USER_ID', 'a.joomla_user_id', $listDirn, $listOrder); ?>
 				</th>
 
 
@@ -77,38 +64,14 @@ $canDelete  = $user->authorise('core.delete', 'com_gw2crafter');
 
 			<tr class="row<?php echo $i % 2; ?>">
 
-				<?php if (isset($this->items[0]->state)) : ?>
-					<?php $class = ($canChange) ? 'active' : 'disabled'; ?>
-					<td class="center">
-	<a class="btn btn-micro <?php echo $class; ?>" href="<?php echo ($canChange) ? JRoute::_('index.php?option=com_gw2crafter&task=favorite.publish&id=' . $item->id . '&state=' . (($item->state + 1) % 2), false, 2) : '#'; ?>">
-	<?php if ($item->state == 1): ?>
-		<i class="icon-publish"></i>
-	<?php else: ?>
-		<i class="icon-unpublish"></i>
-	<?php endif; ?>
-	</a>
-</td>
-				<?php endif; ?>
 
-								<td>
-
-					<?php echo $item->id; ?>
-				</td>
 				<td>
 
-					<?php echo $item->gw2_item_id; ?>
+					<?php echo Gw2crafterHelpersGw2crafter::getItemPageLink($item->gw2_item_id); ?>
+					<br />
+					<?php echo Gw2crafterHelpersGw2crafter::getItemRowForFavorites($item->gw2_item_id); ?>
 				</td>
-				<td>
-				<?php if (isset($item->checked_out) && $item->checked_out) : ?>
-					<?php echo JHtml::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'favorites.', $canCheckin); ?>
-				<?php endif; ?>
-				<a href="<?php echo JRoute::_('index.php?option=com_gw2crafter&view=favorite&id='.(int) $item->id); ?>">
-				<?php echo $this->escape($item->gw2_name); ?></a>
-				</td>
-				<td>
 
-					<?php echo $item->joomla_user_id; ?>
-				</td>
 
 
 								<?php if ($canEdit || $canDelete): ?>

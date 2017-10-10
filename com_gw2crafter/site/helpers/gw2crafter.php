@@ -138,7 +138,7 @@ class Gw2crafterHelpersGw2crafter
 		{
 			return false;
 		}
-		$data  = json_decode($json, true);
+		$data = json_decode($json, true);
 
 		return $data;
 	}
@@ -355,6 +355,7 @@ class Gw2crafterHelpersGw2crafter
 
 		return $name;
 	}
+
 	public static function getItemNameByGw2RecipeId($gw2id)
 	{
 		$db    = JFactory::getDbo();
@@ -444,19 +445,20 @@ class Gw2crafterHelpersGw2crafter
 				$haschild = true;
 			}
 			$itemlist[] = array(
-				'qty'       => $row['qty'],
-				'item_id'   => $row['item_id'],
-				'item_name' => $row['item_name'],
-				'parentqty' => $parentqty,
-				'parentmakes'=> $parentmakes,
-				'has_child' => $haschild,
-				'makes'     => $makes,
-				'depth'     => $depth,
+				'qty'         => $row['qty'],
+				'item_id'     => $row['item_id'],
+				'item_name'   => $row['item_name'],
+				'parentqty'   => $parentqty,
+				'parentmakes' => $parentmakes,
+				'has_child'   => $haschild,
+				'makes'       => $makes,
+				'depth'       => $depth,
 			);
 			if ($haschild)
 			{
-				if ($depth > 1) {
-					$qty = $qty * $parentqty ;
+				if ($depth > 1)
+				{
+					$qty = $qty * $parentqty;
 				}
 				foreach (self::getExpandedRecipeArray($row['item_id'], $qty, $makes, $depth + 1) as $childrow)
 				{
@@ -502,5 +504,117 @@ class Gw2crafterHelpersGw2crafter
 		$intvalue = (int) $db->loadResult();
 
 		return $intvalue;
+	}
+
+	public static function getItemRowForFavorites($gw2_item_id)
+	{
+		$price_data = self::getApiPriceArray($gw2_item_id);
+		$marketdata = true;
+		$buy        = $price_data[0]['high_buy'];
+		$sell       = $price_data[1]['low_sell'];
+		$crazy_buy  = $price_data[0]['crazy_buy'];
+		$crazy_sell = $price_data[1]['crazy_sell'];
+		$cost       = $buy * 1.1;
+		$breakeven  = $cost / .85;
+		$list       = $breakeven * .05;
+		$tax        = $breakeven * .1;
+
+		if ($buy == 0 && $sell == 0)
+		{
+			$marketdata = false;
+		}
+		if (self::itemHasRecipe($gw2_item_id))
+		{
+			$recipe     = self::getRecipeArray($gw2_item_id);
+			$totalprice = 0;
+			foreach ($recipe['recipe_items'] as $item)
+			{
+				$itemprice = $item['qty'] * self::getApiPrice($item['item_id'], false);
+				$totalprice += $itemprice;
+			}
+
+			$cost = $totalprice;
+		}
+
+
+		if ($marketdata)
+		{
+			echo '<div class="item_container" id="item_container">';
+			echo '<div class="item_prices" id="item_prices">
+		<table class="item_prices">
+			<tr>
+				<td>' . JText::_('COM_GW2CRAFTER_LABEL_ITEM_HIGHEST_BUY') . '</td>
+				<td class="right">' . self::getPriceFormatted($buy) . '</td>
+				<td>' . JText::_('COM_GW2CRAFTER_LABEL_ITEM_LOWEST_SELL') . '</td>
+				<td class="right">' . self::getPriceFormatted($sell) . '</td>
+			</tr>
+			<tr>
+				<td>' . JText::_('COM_GW2CRAFTER_LABEL_ITEM_LOWEST_BUY') . '</td>
+				<td class="right">' . self::getPriceFormatted($crazy_buy) . '</td>
+				<td>' . JText::_('COM_GW2CRAFTER_LABEL_ITEM_HIGHEST_SELL') . '</td>
+				<td class="right">' . self::getPriceFormatted($crazy_sell) . '</td>
+			</tr>
+			<tr>
+				<td colspan="2" class="center">' . JText::_('Volume') . ' : ' . $price_data[0]['total_buys'] .
+				JText::_('High') . ' : ' . $price_data[0]['total_buys_in_top'] .
+				JText::_('Low') . ' : ' . $price_data[0]['total_buys_in_bottom'] . '</td>
+				<td colspan="2" class="center">' . JText::_('Volume') . ' : ' .
+				$price_data[1]['total_sells'] . ' ' . JText::_('High') . ' ' . $price_data[1]['total_sells_in_top']
+			. ' ' .
+			JText::_('Low') . ' : ' . $price_data[1]['total_sells_in_bottom'] . '</td>
+			</tr>
+			<tr>
+				<td colspan="4" class="center">B:S = ';
+			if ( $sell != 0) {
+				echo number_format($buy / $sell, 4);
+			} else { echo '0';}
+
+			echo '&nbsp;&nbsp;C:B = ' . number_format($buy / $cost, 4) . '&nbsp;&nbsp;P:L = ' . number_format($sell
+						/ ($sell - $sell * .05 - $sell * .1 - $cost), 4) .'%
+				</td>
+			</tr>
+			<tr>
+				<td>' . JText::_('COM_GW2CRAFTER_LABEL_ITEM_CRAFT_PRICE') . '</td>
+				<td class="right">' . self::getPriceFormatted($cost) . '</td>
+				<td>' . JText::_('COM_GW2CRAFTER_LABEL_ITEM_LIST_FEE') . '</td>
+				<td class="right">' . self::getPriceFormatted($list) . '</td>
+			</tr>
+			<tr>
+				<td>' . JText::_('COM_GW2CRAFTER_LABEL_ITEM_BREAK_EVEN') . '</td>
+				<td class="right">' . self::getPriceFormatted($breakeven) . '</td>
+				<td>' . JText::_('COM_GW2CRAFTER_LABEL_ITEM_SALES_TAX') . '</td>
+				<td class="right">' . self::getPriceFormatted($tax) . '</td>
+
+
+			</tr>
+			<tr>
+				<td>' . JText::_('Dump') . '</td>
+				<td class="right">' . self::getPriceFormatted($buy - $buy * .05 - $buy
+				* .1
+				- $cost) . '</td>
+				<td>' . JText::_('List = ') . number_format(($sell - $sell * .05
+					- $sell * .1
+					- $cost) / $sell * 100, 2) . '%' . '</td>
+				<td class="right">' . self::getPriceFormatted($sell - $sell * .05
+				- $sell * .1
+				- $cost) . '</td>
+			</tr>
+		</table>
+</div>	</div>';
+        }
+		else
+		{
+			echo '<div class="item_prices" id="item_prices">No Market Data</div></div>';
+		}
+
+	}
+	public static function getItemPageLink($gw2_item_id) {
+
+		$url = '<a href="';
+		$url .= JRoute::_('index.php?option=com_gw2crafter&view=item&id='
+			. (int) self::getItemItemRow($gw2_item_id));
+		$url .= '" class="noline">' . self::getItemNameByGw2Id($gw2_item_id) . '</a>';
+
+		return $url;
 	}
 }

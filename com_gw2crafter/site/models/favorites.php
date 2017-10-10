@@ -131,8 +131,8 @@ class Gw2crafterModelFavorites extends JModelList
 		// Join over the created by field 'modified_by'
 		$query->join('LEFT', '#__users AS modified_by ON modified_by.id = a.modified_by');
 		// Join over the foreign key 'gw2_item_id'
-		$query->select('`gw2crafter_api_item_2831653`.`gw2_item_name` AS gw2crafter_api_item_fk_value_2831653');
-		$query->join('LEFT', 'gw2crafter_api_item AS gw2crafter_api_item_2831653 ON gw2crafter_api_item_2831653.`gw2_item_id` = a.`gw2_item_id`');
+		$query->select('`#__gw2crafter_api_item_2831653`.`gw2_item_name` AS gw2crafter_api_item_fk_value_2831653');
+		$query->join('LEFT', '#__gw2crafter_api_item AS #__gw2crafter_api_item_2831653 ON #__gw2crafter_api_item_2831653.`gw2_item_id` = a.`gw2_item_id`');
 		// Join over the foreign key 'joomla_user_id'
 		$query->select('`#__users_2834797`.`username` AS users_fk_value_2834797');
 		$query->join('LEFT', '#__users AS #__users_2834797 ON #__users_2834797.`id` = a.`joomla_user_id`');
@@ -141,23 +141,6 @@ class Gw2crafterModelFavorites extends JModelList
 		{
 			$query->where('a.state = 1');
 		}
-
-		// Filter by search in title
-		$search = $this->getState('filter.search');
-
-		if (!empty($search))
-		{
-			if (stripos($search, 'id:') === 0)
-			{
-				$query->where('a.id = ' . (int) substr($search, 3));
-			}
-			else
-			{
-				$search = $db->Quote('%' . $db->escape($search, true) . '%');
-				$query->where('(#__users_2831653.username LIKE ' . $search . '  OR #__users_2834797.username LIKE ' . $search . ' )');
-			}
-		}
-		
 
 		// Filtering gw2_item_id
 		$filter_gw2_item_id = $this->state->get("filter.gw2_item_id");
@@ -168,12 +151,8 @@ class Gw2crafterModelFavorites extends JModelList
 		}
 
 		// Filtering joomla_user_id
-		$filter_joomla_user_id = $this->state->get("filter.joomla_user_id");
-
-		if ($filter_joomla_user_id)
-		{
-			$query->where("a.`joomla_user_id` = '".$db->escape($filter_joomla_user_id)."'");
-		}
+		$user = JFactory::getUser();
+		$query->where("a.`joomla_user_id` = '".$db->escape($user->id)."'");
 
 		// Add the list ordering clause.
 		$orderCol  = $this->state->get('list.ordering');
@@ -198,33 +177,6 @@ class Gw2crafterModelFavorites extends JModelList
 		
 		foreach ($items as $item)
 		{
-
-			if (isset($item->gw2_item_id))
-			{
-
-				$values    = explode(',', $item->gw2_item_id);
-				$textValue = array();
-
-				foreach ($values as $value)
-				{
-					$db    = JFactory::getDbo();
-					$query = $db->getQuery(true);
-					$query
-						->select('`gw2crafter_api_item_2831653`.`gw2_item_name`')
-						->from($db->quoteName('gw2crafter_api_item', 'gw2crafter_api_item_2831653'))
-						->where($db->quoteName('gw2_item_id') . ' = '. $db->quote($db->escape($value)));
-
-					$db->setQuery($query);
-					$results = $db->loadObject();
-
-					if ($results)
-					{
-						$textValue[] = $results->gw2_item_name;
-					}
-				}
-
-				$item->gw2_item_id = !empty($textValue) ? implode(', ', $textValue) : $item->gw2_item_id;
-			}
 
 
 			if (isset($item->joomla_user_id))
