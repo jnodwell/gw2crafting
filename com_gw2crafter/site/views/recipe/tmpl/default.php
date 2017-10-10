@@ -18,22 +18,22 @@ $pathway->addItem(JText::_('Item Database'), JRoute::_('index.php?option=com_gw2
 
 $pathway->addItem($this->item->gw2_recipe_name, '');
 $this->loadHelper('gw2crafter');
-$price_data  = Gw2crafterHelpersGw2crafter::getApiPriceArray($this->item->gw2_created_item_id);
-$marketdata  = true;
-$buy         = $price_data[0]['high_buy'];
-$sell        = $price_data[1]['low_sell'];
-$crazy_buy   = $price_data[0]['crazy_buy'];
-$crazy_sell  = $price_data[1]['crazy_sell'];
+$price_data = Gw2crafterHelpersGw2crafter::getApiPriceArray($this->item->gw2_created_item_id);
+$marketdata = true;
+$buy        = $price_data[0]['high_buy'];
+$sell       = $price_data[1]['low_sell'];
+$crazy_buy  = $price_data[0]['crazy_buy'];
+$crazy_sell = $price_data[1]['crazy_sell'];
 if ($buy == 0 && $sell == 0)
 {
 	$marketdata = false;
 }
 $craftprice = 0;
-$recipe = Gw2crafterHelpersGw2crafter::getRecipeArray($this->item->gw2_created_item_id);
+$recipe     = Gw2crafterHelpersGw2crafter::getRecipeArray($this->item->gw2_created_item_id);
 ?>
 <div class="item_recipe">
 	<div class="recipe_details" id="recipe_details">
-		<h1><?php echo $this->item->gw2_recipe_name;?></h1>
+		<h1><?php echo $this->item->gw2_recipe_name; ?></h1>
 		<table>
 			<tr>
 				<td><?php echo JText::_('COM_GW2CRAFTER_LABEL_ITEM_RECIPE_TYPE'); ?>:</td>
@@ -58,27 +58,92 @@ $recipe = Gw2crafterHelpersGw2crafter::getRecipeArray($this->item->gw2_created_i
 				<th><?php echo JText::_('COM_GW2CRAFTER_LABEL_ITEM_RECIPE_ITEM_EXTENDED_COST'); ?></th>
 			</tr>
 			<?php
-			$craftprice = 0;
-			foreach (Gw2crafterHelpersGw2crafter::getExpandedRecipeArray($this->item->gw2_created_item_id,1) as $item)
+			$craftprice     = 0;
+			$lastquantities = array(
+				1 => 1,
+				2 => 1,
+				3 => 1,
+				4 => 1,
+				5 => 1,
+				6 => 1
+			);
+			$final_items    = array();
+			$final_names    = array();
+			foreach (
+				Gw2crafterHelpersGw2crafter::getExpandedRecipeArray($this->item->gw2_created_item_id, 1, 1) as $item
+			)
 			{
-				if (!$item['has_child']) {
+				$lastquantities[$item['depth']] = $item['qty'];
+				$item_qty                       = $item['qty'];
+				if ($item['depth'] > 1)
+				{
+					if ($lastquantities[$item['depth'] - 1] != $item['parentqty'])
+					{
+						$lastquantities[$item['depth'] - 1] = $item['parentqty'];
+					}
+				}
+				if (!$item['has_child'])
+				{
 					$itemprice = Gw2crafterHelpersGw2crafter::getApiPrice($item['item_id'], false);
-				} else {
+				}
+				else
+				{
 					$itemprice = 0;
-				}?>
+				} ?>
 				<tr>
-					<td><?php echo $item['qty']; ?></td>
-					<td><?php echo $item['item_name']; ?></td>
-				<?php if ($item['has_child']) : ?>
-				    <td></td>
-				    <td></td>
-				<?php else: ?>
-					<td class="right"><?php echo Gw2crafterHelpersGw2crafter::getPriceFormatted($itemprice); ?></td>
-					<td class="right"><?php echo Gw2crafterHelpersGw2crafter::getPriceFormatted($itemprice*$item['parentqty']*$item['qty']); ?></td>
-				<?php endif; ?>
+					<td><?php if ($item['depth'] == 1)
+						{
+							echo $item['qty'];
+						} ?></td>
+					<td><?php if ($item['depth'] > 1)
+						{
+							$count = 1;
+							while ($count++ < $item['depth'])
+							{
+								echo '&nbsp;&nbsp;&nbsp;';
+							}
+							echo $item['qty'] . ' - ';
+						}
+						$recipe_row = Gw2crafterHelpersGw2crafter::getItemRecipeRow($item['item_id']);
+						if ($recipe_row)
+						{
+							?><a href="<?php echo JRoute::_('index.php?option=com_gw2crafter&view=recipe&id='
+							. (int) Gw2crafterHelpersGw2crafter::getItemRecipeRow($item['item_id'])); ?>"
+							     class="noline"><?php
+							echo $item['item_name']; ?></a>
+							<?php
+						} else {
+							echo $item['item_name'];
+						}
+						$item_qty = $item['qty'] * $item['parentqty'] / $item['makes'];
+
+						echo ' (' . $item_qty . ')'; ?></td>
+					<?php if ($item['has_child']) : ?>
+						<td></td>
+						<td></td>
+					<?php else: ?>
+						<td class="right"><?php echo Gw2crafterHelpersGw2crafter::getPriceFormatted($itemprice); ?></td>
+						<td class="right"><?php echo Gw2crafterHelpersGw2crafter::getPriceFormatted($itemprice
+								* $item_qty); ?></td>
+					<?php endif; ?>
 				</tr>
 				<?php
-				$craftprice += $itemprice;
+				$craftprice += $itemprice * $item_qty;
+				if (!$item['has_child'])
+				{
+					if (!array_key_exists($item['item_id'], $final_names))
+					{
+						$final_names[$item['item_id']] = $item['item_name'];
+					}
+					if (!array_key_exists($item['item_id'], $final_items))
+					{
+						$final_items[$item['item_id']] = $item_qty;
+					}
+					else
+					{
+						$final_items[$item['item_id']] = $final_items[$item['item_id']] + $item_qty;
+					}
+				}
 			} ?>
 			<tr>
 				<td></td>
@@ -87,6 +152,14 @@ $recipe = Gw2crafterHelpersGw2crafter::getRecipeArray($this->item->gw2_created_i
 				<td class="right"><?php echo Gw2crafterHelpersGw2crafter::getPriceFormatted($craftprice); ?></td>
 			</tr>
 		</table>
+		<h4>Shopping List</h4>
+		<?php
+		foreach ($final_items as $key => $qty)
+		{
+			echo "<p>" . $qty . ' ' . $final_names[$key] . "</p>";
+		}
+		?>
+
 	</div>
 </div>
 

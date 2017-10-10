@@ -81,3 +81,14 @@ img.item_details {
 td.right {
       text-align: right;
 }
+.item_recipe_breakdown {
+      margin-top: 5px;
+      float:left;
+      clear:both;
+      width:100%;
+}
+a.noline {
+      text-decoration: none;
+      font-weight: bold;
+      font-size: smaller;
+}

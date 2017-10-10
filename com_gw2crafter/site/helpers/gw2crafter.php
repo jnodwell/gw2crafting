@@ -357,55 +357,59 @@ class Gw2crafterHelpersGw2crafter
 		$db->setQuery($query);
 
 		$row = $db->loadObject();
-if ($row)
-{
+		if ($row)
+		{
 
-	$recipeId              = $row->gw2_recipe_id;
-	$gw2_recipe_type       = $row->gw2_recipe_type;
-	$gw2_recipe_min_rating = $row->gw2_recipe_min_rating;
-	$gw2_output_item_count = $row->gw2_output_item_count;
-	$recipe                = array(
-		'gw2_recipe_type'       => $gw2_recipe_type,
-		'gw2_recipe_min_rating' => $gw2_recipe_min_rating,
-		'gw2_output_item_count' => $gw2_output_item_count,
-		'row_id'                => $row->id,
-		'recipe_items'          => array(),
-	);
-	$query                 = $db->getQuery(true);
-	$query
-		->select('*')
-		->from('#__gw2crafter_recipe_items')
-		->where('gw2crafter_api_recipe_id = ' . (int) $recipeId);
+			$recipeId              = $row->gw2_recipe_id;
+			$gw2_recipe_type       = $row->gw2_recipe_type;
+			$gw2_recipe_min_rating = $row->gw2_recipe_min_rating;
+			$gw2_output_item_count = $row->gw2_output_item_count;
+			$recipe                = array(
+				'gw2_recipe_type'       => $gw2_recipe_type,
+				'gw2_recipe_min_rating' => $gw2_recipe_min_rating,
+				'gw2_output_item_count' => $gw2_output_item_count,
+				'row_id'                => $row->id,
+				'recipe_items'          => array(),
+			);
+			$query                 = $db->getQuery(true);
+			$query
+				->select('*')
+				->from('#__gw2crafter_recipe_items')
+				->where('gw2crafter_api_recipe_id = ' . (int) $recipeId);
 
-	$db->setQuery($query);
+			$db->setQuery($query);
 
-	$result   = $db->loadObjectList();
-	$itemlist = array();
-	foreach ($result as $row)
-	{
+			$result   = $db->loadObjectList();
+			$itemlist = array();
+			foreach ($result as $row)
+			{
 
-		$recipe_row = array(
-			'qty'       => $row->qty,
-			'item_id'   => $row->gw2crafter_api_item_id,
-			'item_name' => self::getItemNameByGw2Id($row->gw2crafter_api_item_id),
-		);
-		$itemlist[] = $recipe_row;
+				$recipe_row = array(
+					'qty'       => $row->qty,
+					'item_id'   => $row->gw2crafter_api_item_id,
+					'item_name' => self::getItemNameByGw2Id($row->gw2crafter_api_item_id),
+				);
+				$itemlist[] = $recipe_row;
+			}
+			$recipe['recipe_items'] = $itemlist;
+
+			return $recipe;
+		}
+
+		return false;
 	}
-	$recipe['recipe_items'] = $itemlist;
 
-	return $recipe;
-}
-return false;
-	}
-
-	public static function getExpandedRecipeArray($gw2_item_id,$parentqty)
+	public static function getExpandedRecipeArray($gw2_item_id, $parentqty, $depth)
 	{
 		$recipe       = self::getRecipeArray($gw2_item_id);
 		$recipe_items = $recipe['recipe_items'];
-		$itemlist = array();
+		$itemlist     = array();
 
 		foreach ($recipe_items as $row)
 		{
+			$qty   = $row['qty'];
+			$makes = $recipe['gw2_output_item_count'];
+
 			$haschild = false;
 			if (self::itemHasRecipe($row['item_id']))
 			{
@@ -417,10 +421,14 @@ return false;
 				'item_name' => $row['item_name'],
 				'parentqty' => $parentqty,
 				'has_child' => $haschild,
+				'makes'     => $makes,
+				'depth'     => $depth,
 			);
 			if ($haschild)
 			{
-				foreach (self::getExpandedRecipeArray($row['item_id'],$row['qty']) as $childrow) {
+				$qty = $qty * $parentqty;
+				foreach (self::getExpandedRecipeArray($row['item_id'], $qty, $depth + 1) as $childrow)
+				{
 					$itemlist[] = $childrow;
 				}
 			}
@@ -429,5 +437,39 @@ return false;
 		$recipe['recipe_items'] = $itemlist;
 
 		return $recipe['recipe_items'];
+	}
+
+	public static function getItemRecipeRow($gw2_item_id)
+	{
+		$db    = JFactory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query
+			->select('id')
+			->from('#__gw2crafter_api_recipe')
+			->where('gw2_created_item_id = ' . (int) $gw2_item_id);
+
+		$db->setQuery($query);
+
+		$intvalue = (int) $db->loadResult();
+
+		return $intvalue;
+	}
+
+	public static function getItemItemRow($gw2_item_id)
+	{
+		$db    = JFactory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query
+			->select('id')
+			->from('#__gw2crafter_api_item')
+			->where('gw2_item_id = ' . (int) $gw2_item_id);
+
+		$db->setQuery($query);
+
+		$intvalue = (int) $db->loadResult();
+
+		return $intvalue;
 	}
 }
