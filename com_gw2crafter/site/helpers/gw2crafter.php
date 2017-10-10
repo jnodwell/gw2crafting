@@ -515,7 +515,7 @@ class Gw2crafterHelpersGw2crafter
 		$crazy_buy  = $price_data[0]['crazy_buy'];
 		$crazy_sell = $price_data[1]['crazy_sell'];
 		$cost       = $buy * 1.1;
-		$breakeven  = $cost / .85;
+		$breakeven  = $cost * 1.15 ;
 		$list       = $breakeven * .05;
 		$tax        = $breakeven * .1;
 
@@ -534,6 +534,10 @@ class Gw2crafterHelpersGw2crafter
 			}
 
 			$cost = $totalprice;
+			$breakeven  = $cost * 1.15 ;
+			$list       = $cost * .05;
+			$tax        = $cost * .1;
+			$breakeven = $cost + $list + $tax;
 		}
 
 
@@ -593,11 +597,9 @@ class Gw2crafterHelpersGw2crafter
 				* .1
 				- $cost) . '</td>
 				<td>' . JText::_('List = ') . number_format(($sell - $sell * .05
-					- $sell * .1
-					- $cost) / $sell * 100, 2) . '%' . '</td>
-				<td class="right">' . self::getPriceFormatted($sell - $sell * .05
-				- $sell * .1
-				- $cost) . '</td>
+					- $sell * .1 -$cost) / $sell * 100, 2) . '%' . '</td>
+				<td class="right">' . self::getPriceFormatted($sell - $cost - ($sell * .05)
+				- ($sell * .1)) . '</td>
 			</tr>
 		</table>
 </div>	</div>';

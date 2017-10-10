@@ -4,9 +4,5 @@
         <field name="search" type="text" hint="COM_GW2CRAFTER_SEARCH_FILTER_SUBMIT"
                label="COM_USERS_FILTER_SEARCH_DESC"
                class="js-stools-search-string" />
-
-        <field name="gw2_item_id" type="sql" label="COM_GW2CRAFTER_FORM_LBL_FAVORITE_GW2_ITEM_ID" query="SELECT '' AS `gw2_item_id`, 'COM_GW2CRAFTER_FAVORITES_GW2_ITEM_ID_FILTER' AS `val` UNION SELECT `gw2_item_id`, `gw2_item_name` AS val FROM `#__gw2crafter_api_item`" key_field="gw2_item_id" value_field="val" class="inputbox" onchange="this.form.submit()" translate="true"/>
-
-
     </fields>
 </form>
