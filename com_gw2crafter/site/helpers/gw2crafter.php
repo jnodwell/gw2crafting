@@ -434,35 +434,38 @@ class Gw2crafterHelpersGw2crafter
 		$recipe_items = $recipe['recipe_items'];
 		$itemlist     = array();
 
-		foreach ($recipe_items as $row)
+		if (count($recipe_items) > 0)
 		{
-			$qty   = $row['qty'];
-			$makes = $recipe['gw2_output_item_count'];
+			foreach ($recipe_items as $row)
+			{
+				$qty   = $row['qty'];
+				$makes = $recipe['gw2_output_item_count'];
 
-			$haschild = false;
-			if (self::itemHasRecipe($row['item_id']))
-			{
-				$haschild = true;
-			}
-			$itemlist[] = array(
-				'qty'         => $row['qty'],
-				'item_id'     => $row['item_id'],
-				'item_name'   => $row['item_name'],
-				'parentqty'   => $parentqty,
-				'parentmakes' => $parentmakes,
-				'has_child'   => $haschild,
-				'makes'       => $makes,
-				'depth'       => $depth,
-			);
-			if ($haschild)
-			{
-				if ($depth > 1)
+				$haschild = false;
+				if (self::itemHasRecipe($row['item_id']))
 				{
-					$qty = $qty * $parentqty;
+					$haschild = true;
 				}
-				foreach (self::getExpandedRecipeArray($row['item_id'], $qty, $makes, $depth + 1) as $childrow)
+				$itemlist[] = array(
+					'qty'         => $row['qty'],
+					'item_id'     => $row['item_id'],
+					'item_name'   => $row['item_name'],
+					'parentqty'   => $parentqty,
+					'parentmakes' => $parentmakes,
+					'has_child'   => $haschild,
+					'makes'       => $makes,
+					'depth'       => $depth,
+				);
+				if ($haschild)
 				{
-					$itemlist[] = $childrow;
+					if ($depth > 1)
+					{
+						$qty = $qty * $parentqty;
+					}
+					foreach (self::getExpandedRecipeArray($row['item_id'], $qty, $makes, $depth + 1) as $childrow)
+					{
+						$itemlist[] = $childrow;
+					}
 				}
 			}
 		}

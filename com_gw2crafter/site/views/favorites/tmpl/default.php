@@ -31,15 +31,19 @@ $this->loadHelper('gw2crafter');
       name="adminForm" id="adminForm">
 
 	<?php echo JLayoutHelper::render('default_filter', array('view' => $this), dirname(__FILE__)); ?>
-	<table class="table table-striped" id="favoriteList">
+	<table class="table" id="favoriteList">
 		<thead>
 		<tr>
-				<th class=''>
-				<?php echo JHtml::_('grid.sort',  'COM_GW2CRAFTER_FAVORITES_GW2_NAME', 'a.gw2_name', $listDirn, $listOrder); ?>
-				</th>
 
+
+			<th class=''>
+				<?php echo JHtml::_('grid.sort',  'COM_GW2CRAFTER_FAVORITES_GW2_NAME', 'a.gw2_name', $listDirn, $listOrder); ?>
+			</th>
 
 							<?php if ($canEdit || $canDelete): ?>
+								<th class='' width="5%">
+									<?php echo JHtml::_('grid.sort',  'COM_GW2CRAFTER_FAVORITES_ORDERING', 'a.ordering', $listDirn, $listOrder); ?>
+								</th>
 					<th class="center">
 				<?php echo JText::_('COM_GW2CRAFTER_FAVORITES_ACTIONS'); ?>
 				</th>
@@ -64,7 +68,6 @@ $this->loadHelper('gw2crafter');
 
 			<tr class="row<?php echo $i % 2; ?>">
 
-
 				<td>
 
 					<?php echo Gw2crafterHelpersGw2crafter::getItemPageLink($item->gw2_item_id); ?>
@@ -75,7 +78,9 @@ $this->loadHelper('gw2crafter');
 
 
 								<?php if ($canEdit || $canDelete): ?>
+									<td><?php echo $item->ordering; ?></td>
 					<td class="center">
+
 						<?php if ($canEdit): ?>
 							<a href="<?php echo JRoute::_('index.php?option=com_gw2crafter&task=favoriteform.edit&id=' . $item->id, false, 2); ?>" class="btn btn-mini" type="button"><i class="icon-edit" ></i></a>
 						<?php endif; ?>

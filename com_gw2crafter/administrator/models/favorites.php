@@ -196,7 +196,6 @@ class Gw2crafterModelFavorites extends JModelList
 		{
 			$query->order($db->escape($orderCol . ' ' . $orderDirn));
 		}
-
 		return $query;
 	}
 

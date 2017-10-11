@@ -9,20 +9,27 @@
 // No direct access
 defined('_JEXEC') or die;
 
-$apiKey = 'BB68E458-7296-A041-A10A-6810FFFC8BC17766F666-5DBE-4FDB-A6D8-D4920DC25016';
-
+$user = JFactory::getUser();
+$profile = JUserHelper::getProfile($user->id);
+$apiKey = $profile->gw2profile['apikey'];
 $canEdit = true;
+if (!$apiKey) {
+	$canEdit = false;
+}
 if ($canEdit) {
 	$json  = @file_get_contents('https://api.guildwars2.com/v2/account/materials?access_token=' . $apiKey);
 	$data  = json_decode($json, true);
-	var_dump($data);
 ?>
 
 <div class="item_fields">
 
 	<table class="table">
 		
-
+<?php
+foreach($data as $something) {
+	var_dump($something);
+}
+?>
 	</table>
 
 </div>

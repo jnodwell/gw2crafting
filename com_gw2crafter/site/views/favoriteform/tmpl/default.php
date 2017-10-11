@@ -54,6 +54,7 @@ $canEdit = Gw2crafterHelpersGw2crafter::canUserEdit($this->item, $user);
 
 				<?php echo $this->form->getInput('created_by'); ?>
 				<?php echo $this->form->getInput('modified_by'); ?>
+			<?php echo $this->form->renderField('ordering'); ?>
 	<?php echo $this->form->renderField('gw2_item_id'); ?>
 
 	<?php foreach((array)$this->item->gw2_item_id as $value): ?>
@@ -62,14 +63,10 @@ $canEdit = Gw2crafterHelpersGw2crafter::canUserEdit($this->item, $user);
 		<?php endif; ?>
 	<?php endforeach; ?>
 	<?php echo $this->form->renderField('gw2_name'); ?>
+			<?php //echo $this->form->renderField('joomla_user_id'); ?>
+			<input type="hidden" class="joomla_user_id" name="jform[joomla_user_id][<?php echo $user->id; ?>]" value="<?php echo $user->id; ?>" />
 
-	<?php echo $this->form->renderField('joomla_user_id'); ?>
-
-	<?php foreach((array)$this->item->joomla_user_id as $value): ?>
-		<?php if(!is_array($value)): ?>
-			<input type="hidden" class="joomla_user_id" name="jform[joomla_user_idhidden][<?php echo $value; ?>]" value="<?php echo $value; ?>" />
-		<?php endif; ?>
-	<?php endforeach; ?>				<div class="fltlft" <?php if (!JFactory::getUser()->authorise('core.admin','gw2crafter')): ?> style="display:none;" <?php endif; ?> >
+				<div class="fltlft" <?php if (!JFactory::getUser()->authorise('core.admin','gw2crafter')): ?> style="display:none;" <?php endif; ?> >
                 <?php echo JHtml::_('sliders.start', 'permissions-sliders-'.$this->item->id, array('useCookie'=>1)); ?>
                 <?php echo JHtml::_('sliders.panel', JText::_('ACL Configuration'), 'access-rules'); ?>
                 <fieldset class="panelform">

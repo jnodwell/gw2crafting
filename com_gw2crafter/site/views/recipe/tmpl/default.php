@@ -70,7 +70,8 @@ $recipe     = Gw2crafterHelpersGw2crafter::getRecipeArray($this->item->gw2_creat
 			$final_items    = array();
 			$final_names    = array();
 			foreach (
-				Gw2crafterHelpersGw2crafter::getExpandedRecipeArray($this->item->gw2_created_item_id, $this->item->gw2_output_item_count,$this->item->gw2_output_item_count, 1) as $item
+				Gw2crafterHelpersGw2crafter::getExpandedRecipeArray($this->item->gw2_created_item_id,
+					$this->item->gw2_output_item_count, $this->item->gw2_output_item_count, 1) as $item
 			)
 			{
 				$lastquantities[$item['depth']] = $item['qty'];
@@ -119,7 +120,10 @@ $recipe     = Gw2crafterHelpersGw2crafter::getRecipeArray($this->item->gw2_creat
 						}
 						$item_qty = $item['qty'] * $item['parentqty'] / $item['makes'] / $item['parentmakes'];
 
-						if ($item['depth'] > 1) { echo ' (' . $item_qty . ')';} ?></td>
+						if ($item['depth'] > 1)
+						{
+							echo ' (' . $item_qty . ')';
+						} ?></td>
 					<?php if ($item['has_child']) : ?>
 						<td></td>
 						<td></td>
@@ -155,22 +159,32 @@ $recipe     = Gw2crafterHelpersGw2crafter::getRecipeArray($this->item->gw2_creat
 			</tr>
 		</table>
 		<div class="pane">
-			<div >
+			<div>
 				<h4>Shopping List</h4>
 				<?php
+				$user    = JFactory::getUser();
+				$profile = JUserHelper::getProfile($user->id);
+				$apiKey  = $profile->gw2profile['apikey'];
+				if ($apiKey)
+				{
+					$json = @file_get_contents('https://api.guildwars2.com/v2/account/materials?access_token='
+						. $apiKey);
+					$data = json_decode($json, true);
+				}
 				foreach ($final_items as $key => $qty)
 				{
 					echo "<p>" . $qty . ' ' . $final_names[$key];
-					//TODO get user id and match api key to it from user profile fields
-					$apiKey = 'BB68E458-7296-A041-A10A-6810FFFC8BC17766F666-5DBE-4FDB-A6D8-D4920DC25016';
-					$json  = @file_get_contents('https://api.guildwars2.com/v2/account/materials?access_token=' . $apiKey);
-					$data  = json_decode($json, true);
-					foreach($data as $item) {
-						if($item['id'] == $key) {
-							echo " (" . $item['count']  . ' onhand)';
+					if ($apiKey)
+					{
+						foreach ($data as $item)
+						{
+							if ($item['id'] == $key)
+							{
+								echo " (" . $item['count'] . ' on hand)';
+							}
 						}
 					}
-					echo  "</p>";
+					echo "</p>";
 				}
 				?>
 			</div>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fields name="gw2profile">
+		<fieldset
+			name="gw2profile"
+			label="PLG_USER_GW2PROFILE_SLIDER_LABEL"
+		>
+			<field
+					name="apikey"
+					type="apikey"
+					label="PLG_USER_GW2PROFILE_FIELD_APIKEY_LABEL"
+					description="PLG_USER_GW2PROFILE_FIELD_APIKEY_DESC"
+					id="apikey"
+					filter="string"
+					size="128"
+			/>
+
+			<field
+				name="website"
+				type="url"
+				label="PLG_USER_GW2PROFILE_FIELD_WEB_SITE_LABEL"
+				description="PLG_USER_GW2PROFILE_FIELD_WEB_SITE_DESC"
+				id="website"
+				filter="url"
+				size="30"
+			/>
+
+			<field
+				name="favoritebook"
+				type="text"
+				label="PLG_USER_GW2PROFILE_FIELD_FAVORITE_BOOK_LABEL"
+				description="PLG_USER_GW2PROFILE_FIELD_FAVORITE_BOOK_DESC"
+				filter="string"
+				size="30"
+			/>
+
+			<field
+				name="aboutme"
+				type="textarea"
+				label="PLG_USER_GW2PROFILE_FIELD_ABOUT_ME_LABEL"
+				description="PLG_USER_GW2PROFILE_FIELD_ABOUT_ME_DESC"
+				cols="30"
+				rows="5"
+				filter="safehtml"
+			/>
+
+			<field
+				name="dob"
+				type="dob"
+				label="PLG_USER_GW2PROFILE_FIELD_DOB_LABEL"
+				description="PLG_USER_GW2PROFILE_FIELD_DOB_DESC"
+				info="PLG_USER_GW2PROFILE_SPACER_DOB"
+				translateformat="true"
+				showtime="false"
+				filter="server_utc"
+			/>
+
+			<field
+				name="tos"
+				type="tos"
+				label="PLG_USER_GW2PROFILE_FIELD_TOS_LABEL"
+				description="PLG_USER_GW2PROFILE_FIELD_TOS_DESC"
+				default="0"
+				>
+				<option value="1">PLG_USER_GW2PROFILE_OPTION_AGREE</option>
+				<option value="0">JNO</option>
+			</field>
+		</fieldset>
+	</fields>
+</form>

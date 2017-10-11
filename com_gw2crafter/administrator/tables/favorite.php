@@ -205,12 +205,6 @@ class Gw2crafterTablefavorite extends JTable
 		{
 			throw new Exception('Your <b>gw2_item_id</b> item "<b>' . $this->gw2_item_id . '</b>" already exists');
 		}
-		// Check if joomla_user_id is unique
-		if (!$this->isUnique('joomla_user_id'))
-		{
-			throw new Exception('Your <b>joomla_user_id</b> item "<b>' . $this->joomla_user_id . '</b>" already exists');
-		}
-		
 
 		return parent::check();
 	}
